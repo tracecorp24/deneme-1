@@ -87,6 +87,10 @@ class TestRunner:
                 self.logs.pop(0)
         logger.info("[%s] %s", level, message)
 
+    def clear_logs(self):
+        with self._lock:
+            self.logs.clear()
+
     def set_step_status(self, step_id: int, status: str, details: str = ""):
         with self._lock:
             for s in self.steps:

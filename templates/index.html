@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VFS Global Bulgaristan Vize Botu — Yönetim ve Kontrol Paneli</title>
-    <!-- Modern Typography: Outfit, Inter & JetBrains Mono -->
+    <title>VFS Global Bulgaristan Vize Botu — Kolay Yönetim Paneli</title>
+    <!-- Modern Typography: Outfit & Plus Jakarta Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #060911;
-            --bg-secondary: #0b111e;
-            --bg-card: rgba(15, 23, 42, 0.75);
-            --bg-card-hover: rgba(22, 32, 54, 0.85);
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-focus: rgba(6, 182, 212, 0.4);
+            --bg-body: #070a13;
+            --bg-card: rgba(15, 23, 42, 0.72);
+            --bg-card-hover: rgba(22, 33, 58, 0.85);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(56, 189, 248, 0.35);
             
             --emerald: #10b981;
-            --emerald-glow: rgba(16, 185, 129, 0.3);
+            --emerald-glow: rgba(16, 185, 129, 0.35);
+            --sky: #0ea5e9;
             --cyan: #06b6d4;
             --cyan-glow: rgba(6, 182, 212, 0.3);
             --indigo: #6366f1;
@@ -30,10 +30,12 @@
             --text-muted: #94a3b8;
             --text-dim: #64748b;
             
+            --radius-xl: 20px;
             --radius-lg: 16px;
             --radius-md: 12px;
             --radius-sm: 8px;
-            --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+            --shadow-glass: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-glass);
+            --shadow-glow: 0 0 25px -5px var(--cyan-glow);
         }
 
         * {
@@ -43,23 +45,24 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-primary);
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-body);
             color: var(--text-main);
             min-height: 100vh;
             background-image: 
-                radial-gradient(circle at 12% 15%, rgba(99, 102, 241, 0.14) 0%, transparent 40%),
-                radial-gradient(circle at 88% 20%, rgba(6, 182, 212, 0.14) 0%, transparent 40%),
-                radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.10) 0%, transparent 50%);
+                radial-gradient(circle at 10% 12%, rgba(99, 102, 241, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(6, 182, 212, 0.16) 0%, transparent 45%),
+                radial-gradient(circle at 50% 88%, rgba(16, 185, 129, 0.12) 0%, transparent 55%);
             background-attachment: fixed;
             line-height: 1.5;
             padding-bottom: 60px;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            max-width: 1440px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 24px 32px;
+            padding: 24px 28px;
         }
 
         /* Top Header */
@@ -68,11 +71,11 @@
             align-items: center;
             justify-content: space-between;
             background: var(--bg-card);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-subtle);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-glass);
             border-radius: var(--radius-lg);
-            padding: 18px 28px;
+            padding: 16px 24px;
             margin-bottom: 24px;
             box-shadow: var(--shadow-glass);
         }
@@ -80,31 +83,27 @@
         .header-brand {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 14px;
         }
 
         .brand-badge {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #0ea5e9, #10b981);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 800;
             font-size: 22px;
-            color: #ffffff;
-            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4);
+            box-shadow: 0 4px 18px rgba(16, 185, 129, 0.4);
         }
 
         .brand-text h1 {
             font-family: 'Outfit', sans-serif;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
+            color: #ffffff;
             letter-spacing: -0.02em;
-            background: linear-gradient(to right, #ffffff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         .brand-text p {
@@ -116,53 +115,245 @@
         }
 
         .tag-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 2px 10px;
+            background: rgba(14, 165, 233, 0.12);
+            color: #38bdf8;
+            padding: 2px 8px;
             border-radius: 9999px;
             font-size: 11px;
             font-weight: 600;
-            background: rgba(6, 182, 212, 0.15);
-            color: var(--cyan);
-            border: 1px solid rgba(6, 182, 212, 0.3);
+            border: 1px solid rgba(14, 165, 233, 0.25);
         }
 
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
         }
 
         .live-status {
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.25);
-            padding: 8px 16px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+            padding: 7px 14px;
             border-radius: 9999px;
             font-size: 13px;
             font-weight: 600;
-            color: var(--emerald);
+            transition: all 0.3s ease;
+        }
+
+        .live-status.running {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.5);
+            color: #10b981;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
         }
 
         .pulse-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background-color: var(--emerald);
-            box-shadow: 0 0 10px var(--emerald);
-            animation: pulse 2s infinite;
+            background-color: #10b981;
+            box-shadow: 0 0 10px #10b981;
+            animation: pulse-ring 2s infinite;
         }
 
-        @keyframes pulse {
+        @keyframes pulse-ring {
             0% { transform: scale(0.95); opacity: 0.8; }
-            50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 16px var(--emerald); }
+            50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 14px #10b981; }
             100% { transform: scale(0.95); opacity: 0.8; }
         }
 
-        /* KPI Metrics Bar */
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 9px 16px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            border: 1px solid transparent;
+            outline: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none !important;
+            filter: grayscale(0.5);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(14, 165, 233, 0.3);
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.45);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+        }
+        .btn-success:hover:not(:disabled) {
+            background: linear-gradient(135deg, #34d399, #10b981);
+            box-shadow: 0 6px 22px rgba(16, 185, 129, 0.45);
+        }
+
+        .btn-danger {
+            background: rgba(244, 63, 94, 0.15);
+            color: #f43f5e;
+            border-color: rgba(244, 63, 94, 0.4);
+        }
+        .btn-danger:hover:not(:disabled) {
+            background: rgba(244, 63, 94, 0.25);
+            border-color: #f43f5e;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border-glass);
+        }
+        .btn-outline:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .btn-lg {
+            padding: 13px 24px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: var(--radius-md);
+        }
+
+        /* Hero Control Card */
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(11, 17, 30, 0.95));
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: var(--radius-xl);
+            padding: 26px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), 0 0 30px rgba(14, 165, 233, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-info h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-info p {
+            font-size: 14px;
+            color: var(--text-muted);
+            max-width: 650px;
+            line-height: 1.6;
+        }
+
+        .hero-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        /* 3-Step Wizard Quick Guide */
+        .wizard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .wizard-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .wizard-step:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+            background: var(--bg-card-hover);
+        }
+
+        .step-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .step-content h4 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 3px;
+        }
+
+        .step-content p {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        /* Metrics Grid */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -172,44 +363,45 @@
 
         .metric-card {
             background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            padding: 16px 20px;
             backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 18px 22px;
             display: flex;
             align-items: center;
             gap: 16px;
-            transition: transform 0.2s ease, border-color 0.2s ease;
+            box-shadow: var(--shadow-glass);
+            transition: all 0.2s ease;
         }
 
         .metric-card:hover {
+            border-color: rgba(255, 255, 255, 0.16);
             transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.15);
         }
 
         .metric-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 22px;
             flex-shrink: 0;
         }
 
         .metric-info h3 {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.05em;
             color: var(--text-dim);
             margin-bottom: 2px;
         }
 
         .metric-info .val {
             font-family: 'Outfit', sans-serif;
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
             color: #ffffff;
         }
@@ -217,116 +409,63 @@
         .metric-info .sub {
             font-size: 11px;
             color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 170px;
         }
 
-        /* Action Banner */
-        .action-banner {
+        /* Tabs Nav */
+        .tabs-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(99, 102, 241, 0.12));
-            border: 1px solid rgba(6, 182, 212, 0.35);
-            border-radius: var(--radius-lg);
-            padding: 22px 28px;
-            margin-bottom: 24px;
-            box-shadow: 0 8px 32px rgba(6, 182, 212, 0.15);
-        }
-
-        .banner-info h2 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 19px;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 4px;
-        }
-
-        .banner-info p {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        .banner-buttons {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
             gap: 8px;
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
+            border-bottom: 1px solid var(--border-glass);
+            margin-bottom: 20px;
+            padding-bottom: 4px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
             padding: 10px 18px;
             border-radius: var(--radius-sm);
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             transition: all 0.2s ease;
-            text-decoration: none;
-            border: 1px solid transparent;
-            outline: none;
         }
 
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            filter: grayscale(0.5);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        .tab-btn:hover {
             color: #ffffff;
-            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
+            background: rgba(255, 255, 255, 0.04);
         }
 
-        .btn-primary:hover:not(:disabled) {
-            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
-            transform: translateY(-1px);
+        .tab-btn.active {
+            color: #38bdf8;
+            background: rgba(14, 165, 233, 0.12);
+            border: 1px solid rgba(14, 165, 233, 0.25);
         }
 
-        .btn-success {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: #ffffff;
-            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
         }
 
-        .btn-success:hover:not(:disabled) {
-            background: linear-gradient(135deg, #34d399, #10b981);
-            transform: translateY(-1px);
-        }
-
-        .btn-danger {
-            background: rgba(244, 63, 94, 0.15);
-            color: var(--rose);
-            border-color: rgba(244, 63, 94, 0.35);
-        }
-
-        .btn-danger:hover:not(:disabled) {
-            background: var(--rose);
-            color: #ffffff;
-        }
-
-        .btn-outline {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-main);
-            border-color: var(--border-subtle);
-        }
-
-        .btn-outline:hover:not(:disabled) {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        /* Glass Cards */
+        /* Cards & Tables */
         .glass-card {
             background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
             border-radius: var(--radius-lg);
-            padding: 22px;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            padding: 22px 24px;
             box-shadow: var(--shadow-glass);
             margin-bottom: 24px;
         }
@@ -340,7 +479,7 @@
 
         .card-title {
             font-family: 'Outfit', sans-serif;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 700;
             color: #ffffff;
             display: flex;
@@ -348,165 +487,11 @@
             gap: 10px;
         }
 
-        /* Dashboard Two Column Grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-
-        /* Pipeline Steps */
-        .pipeline-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .pipeline-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            padding: 12px 16px;
-            transition: all 0.3s ease;
-        }
-
-        .pipeline-item.running {
-            background: rgba(6, 182, 212, 0.08);
-            border-color: rgba(6, 182, 212, 0.4);
-            box-shadow: 0 0 16px rgba(6, 182, 212, 0.15);
-        }
-
-        .pipeline-item.completed {
-            background: rgba(16, 185, 129, 0.06);
-            border-color: rgba(16, 185, 129, 0.3);
-        }
-
-        .pipeline-item.failed {
-            background: rgba(244, 63, 94, 0.08);
-            border-color: rgba(244, 63, 94, 0.4);
-        }
-
-        .step-number {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 13px;
-            background: #1e293b;
-            color: var(--text-muted);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            flex-shrink: 0;
-            transition: all 0.3s ease;
-        }
-
-        .pipeline-item.running .step-number {
-            background: var(--cyan);
-            color: #041019;
-            border-color: #ffffff;
-            box-shadow: 0 0 14px var(--cyan);
-        }
-
-        .pipeline-item.completed .step-number {
-            background: var(--emerald);
-            color: #ffffff;
-            border-color: var(--emerald);
-            box-shadow: 0 0 12px var(--emerald-glow);
-        }
-
-        .step-content {
-            flex-grow: 1;
-        }
-
-        .step-header-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 2px;
-        }
-
-        .step-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
-        .step-badge {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 2px 8px;
-            border-radius: 9999px;
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--text-dim);
-        }
-
-        .pipeline-item.running .step-badge {
-            background: rgba(6, 182, 212, 0.2);
-            color: var(--cyan);
-        }
-
-        .pipeline-item.completed .step-badge {
-            background: rgba(16, 185, 129, 0.2);
-            color: var(--emerald);
-        }
-
-        .step-desc {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .step-details {
-            font-size: 11px;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--cyan);
-            margin-top: 2px;
-        }
-
-        /* Upload Dropzone */
-        .upload-zone {
-            border: 2px dashed rgba(255, 255, 255, 0.15);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: rgba(0, 0, 0, 0.2);
-            margin-bottom: 16px;
-        }
-
-        .upload-zone:hover, .upload-zone.dragover {
-            border-color: var(--cyan);
-            background: rgba(6, 182, 212, 0.05);
-        }
-
-        .upload-zone .icon {
-            font-size: 26px;
-            margin-bottom: 4px;
-        }
-
-        .upload-zone p {
-            font-size: 13px;
-            color: var(--text-main);
-        }
-
-        .upload-zone span {
-            font-size: 11px;
-            color: var(--text-dim);
-        }
-
-        /* Tables */
         .table-wrapper {
             overflow-x: auto;
             border-radius: var(--radius-sm);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            max-height: 280px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            max-height: 380px;
         }
 
         table {
@@ -517,21 +502,23 @@
         }
 
         th {
-            background: rgba(30, 41, 59, 0.85);
+            background: rgba(30, 41, 59, 0.9);
             color: var(--text-muted);
             font-weight: 600;
-            padding: 10px 14px;
+            padding: 11px 16px;
             position: sticky;
             top: 0;
-            backdrop-filter: blur(8px);
+            z-index: 10;
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             font-size: 12px;
         }
 
         td {
-            padding: 10px 14px;
+            padding: 12px 16px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             color: var(--text-main);
+            vertical-align: middle;
         }
 
         tr:hover td {
@@ -539,22 +526,57 @@
         }
 
         .badge-durum {
-            padding: 2px 8px;
+            padding: 3px 9px;
             border-radius: 9999px;
             font-size: 11px;
             font-weight: 700;
             display: inline-block;
         }
-
         .badge-durum.PENDING { background: rgba(245, 158, 11, 0.15); color: var(--amber); }
-        .badge-durum.SLOT_FOUND { background: rgba(6, 182, 212, 0.2); color: var(--cyan); border: 1px solid rgba(6, 182, 212, 0.4); }
+        .badge-durum.SLOT_FOUND { background: rgba(6, 182, 212, 0.2); color: var(--cyan); border: 1px solid rgba(6, 182, 212, 0.4); animation: pulse-border 1.5s infinite; }
         .badge-durum.BOOKED { background: rgba(16, 185, 129, 0.2); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.4); }
-        .badge-durum.COOLDOWN { background: rgba(244, 63, 94, 0.15); color: var(--rose); }
+        .badge-durum.COOLDOWN, .badge-durum.LOCKED_24H { background: rgba(244, 63, 94, 0.15); color: var(--rose); }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(6, 182, 212, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+        }
+
+        /* Upload Dropzone */
+        .upload-zone {
+            border: 2px dashed rgba(255, 255, 255, 0.14);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 16px;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--sky);
+            background: rgba(14, 165, 233, 0.05);
+        }
+
+        .upload-zone .icon {
+            font-size: 30px;
+            margin-bottom: 6px;
+        }
+
+        /* 2-Column Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
 
         /* Terminal Console */
         .terminal-card {
             background: #040711;
-            border: 1px solid var(--border-subtle);
+            border: 1px solid var(--border-glass);
             border-radius: var(--radius-lg);
             overflow: hidden;
             box-shadow: var(--shadow-glass);
@@ -571,7 +593,7 @@
 
         .mac-dots {
             display: flex;
-            gap: 7px;
+            gap: 6px;
         }
 
         .mac-dot {
@@ -579,7 +601,6 @@
             height: 10px;
             border-radius: 50%;
         }
-
         .mac-dot.red { background: #ff5f56; }
         .mac-dot.yellow { background: #ffbd2e; }
         .mac-dot.green { background: #27c93f; }
@@ -591,19 +612,19 @@
         }
 
         .terminal-body {
-            height: 280px;
+            height: 290px;
             overflow-y: auto;
             padding: 14px 18px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
-            line-height: 1.7;
+            line-height: 1.65;
             background: #040711;
         }
 
         .log-row {
             display: flex;
-            gap: 12px;
-            margin-bottom: 3px;
+            gap: 10px;
+            margin-bottom: 4px;
         }
 
         .log-time {
@@ -618,11 +639,10 @@
             border-radius: 4px;
             font-size: 10px;
             flex-shrink: 0;
-            height: 20px;
+            height: 19px;
             display: inline-flex;
             align-items: center;
         }
-
         .log-badge.INFO { background: rgba(6, 182, 212, 0.15); color: var(--cyan); }
         .log-badge.SUCCESS { background: rgba(16, 185, 129, 0.15); color: var(--emerald); }
         .log-badge.WARNING, .log-badge.WARN { background: rgba(245, 158, 11, 0.15); color: var(--amber); }
@@ -636,13 +656,12 @@
 
         /* Screenshot */
         .screenshot-container {
-            margin-top: 12px;
             border-radius: var(--radius-md);
             overflow: hidden;
-            border: 1px solid var(--border-subtle);
+            border: 1px solid var(--border-glass);
             background: #000000;
             text-align: center;
-            max-height: 280px;
+            height: 290px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -650,7 +669,7 @@
 
         .screenshot-container img {
             max-width: 100%;
-            max-height: 280px;
+            max-height: 290px;
             object-fit: contain;
             display: block;
             cursor: pointer;
@@ -662,7 +681,53 @@
             font-size: 13px;
         }
 
-        /* Modal */
+        /* Pipeline Step List */
+        .pipeline-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .pipeline-step {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .step-icon-badge {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+            color: var(--text-muted);
+        }
+
+        .pipeline-step.success .step-icon-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--emerald);
+        }
+        .pipeline-step.running .step-icon-badge {
+            background: rgba(14, 165, 233, 0.2);
+            color: var(--sky);
+            animation: pulse-ring 1.5s infinite;
+        }
+        .pipeline-step.error .step-icon-badge {
+            background: rgba(244, 63, 94, 0.2);
+            color: var(--rose);
+        }
+
+        /* Modal Overlay */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -670,44 +735,54 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(12px);
             z-index: 1000;
             align-items: center;
             justify-content: center;
         }
 
         .modal-box {
-            width: 640px;
+            width: 660px;
             max-width: 92%;
             background: #0b1120;
-            border: 1px solid rgba(6, 182, 212, 0.4);
+            border: 1px solid rgba(14, 165, 233, 0.35);
             border-radius: var(--radius-lg);
-            padding: 24px;
-            box-shadow: var(--shadow-glass);
+            padding: 26px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
             max-height: 90vh;
             overflow-y: auto;
         }
 
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 14px;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
         }
 
         .form-group label {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
-            color: var(--text-main);
+            color: var(--text-muted);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
 
         .form-input {
             width: 100%;
             padding: 10px 14px;
-            background: rgba(0, 0, 0, 0.45);
-            border: 1px solid var(--border-subtle);
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-glass);
             border-radius: 8px;
             color: #ffffff;
             font-family: inherit;
@@ -717,7 +792,8 @@
 
         .form-input:focus {
             outline: none;
-            border-color: var(--cyan);
+            border-color: var(--sky);
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
         }
 
         /* Switch */
@@ -726,10 +802,10 @@
             align-items: center;
             gap: 12px;
             background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-subtle);
+            border: 1px solid var(--border-glass);
             padding: 12px 16px;
             border-radius: 8px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .switch-toggle {
@@ -738,7 +814,6 @@
             width: 44px;
             height: 24px;
         }
-
         .switch-toggle input { opacity: 0; width: 0; height: 0; }
 
         .slider {
@@ -749,7 +824,6 @@
             transition: .3s;
             border-radius: 24px;
         }
-
         .slider:before {
             position: absolute;
             content: "";
@@ -761,18 +835,54 @@
             transition: .3s;
             border-radius: 50%;
         }
-
         input:checked + .slider { background-color: var(--emerald); }
         input:checked + .slider:before { transform: translateX(20px); }
 
+        /* Toast Popup */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast-msg {
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+        .toast-msg.success { border-color: rgba(16, 185, 129, 0.5); }
+        .toast-msg.error { border-color: rgba(244, 63, 94, 0.5); }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
         @media (max-width: 1024px) {
             .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .wizard-grid { grid-template-columns: 1fr; }
             .dashboard-grid { grid-template-columns: 1fr; }
+            .hero-banner { flex-direction: column; text-align: center; }
+            .hero-controls { width: 100%; justify-content: center; flex-wrap: wrap; }
         }
         @media (max-width: 640px) {
             .metrics-grid { grid-template-columns: 1fr; }
-            .action-banner { flex-direction: column; gap: 16px; text-align: center; }
-            .banner-buttons { flex-wrap: wrap; justify-content: center; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-group.full { grid-column: span 1; }
+            header { flex-direction: column; gap: 14px; text-align: center; }
+            .header-actions { flex-wrap: wrap; justify-content: center; }
         }
     </style>
 </head>
@@ -782,12 +892,12 @@
     <!-- Top Header -->
     <header>
         <div class="header-brand">
-            <div class="brand-badge">VB</div>
+            <div class="brand-badge">🇧🇬</div>
             <div class="brand-text">
-                <h1>VFS Global Bulgaristan Vize Botu</h1>
+                <h1>VFS Randevu Takip & Otomasyon</h1>
                 <p>
-                    <span>Hedef: Türkiye &rarr; Bulgaristan</span>
-                    <span class="tag-pill">İki Katmanlı Hibrit Mimari (Plan v2)</span>
+                    <span>Hedef: Türkiye &rarr; Bulgaristan Vizesi</span>
+                    <span class="tag-pill">İki Katmanlı Koruma</span>
                 </p>
             </div>
         </div>
@@ -796,69 +906,35 @@
                 <span class="pulse-dot" id="system-pulse-dot"></span>
                 <span id="system-status-text">Sistem Hazır</span>
             </div>
+            <button class="btn btn-success" onclick="openAddApplicantModal()">
+                ➕ Yeni Kişi Ekle
+            </button>
             <a href="/api/template" class="btn btn-outline" id="btn-download-tpl">
-                📥 Şablon Excel İndir
+                📥 Örnek Excel
             </a>
-            <button class="btn btn-outline" onclick="syncExcelNow()">
-                🔄 Excel & DB Eşitle
+            <button class="btn btn-outline" onclick="openSettingsModal()">
+                ⚙️ Ayarlar
             </button>
         </div>
     </header>
 
-    <!-- Key Metrics Cards -->
-    <div class="metrics-grid">
-        <div class="metric-card">
-            <div class="metric-icon" style="background: rgba(99, 102, 241, 0.15); color: var(--indigo);">👥</div>
-            <div class="metric-info">
-                <h3>Aktif Başvuran</h3>
-                <div class="val" id="metric-applicants">0</div>
-                <div class="sub" id="metric-applicants-sub">Bekleyen başvuranlar</div>
-            </div>
+    <!-- Hero Action Section -->
+    <div class="hero-banner">
+        <div class="hero-info">
+            <h2>
+                <span>⚡</span>
+                Otomatik Vize Randevusu Takip Sistemi
+            </h2>
+            <p>
+                Siz arkanıza yaslanın! Sistem VFS sunucularını güvenli aralıklarla kontrol eder, açık randevu tarihi yakalandığı an telefonunuza bildirim gönderir ve isterseniz anında rezervasyon yapar.
+            </p>
         </div>
-        <div class="metric-card">
-            <div class="metric-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--emerald);">🎯</div>
-            <div class="metric-info">
-                <h3>Tespit Edilen Slot</h3>
-                <div class="val" id="metric-slots">0</div>
-                <div class="sub">Açık randevu tarihi</div>
-            </div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-icon" style="background: rgba(6, 182, 212, 0.15); color: var(--cyan);">⚡</div>
-            <div class="metric-info">
-                <h3>Alınan Randevu</h3>
-                <div class="val" id="metric-booked">0</div>
-                <div class="sub">Başarıyla rezerve</div>
-            </div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-icon" style="background: rgba(245, 158, 11, 0.15); color: var(--amber);">⏱️</div>
-            <div class="metric-info">
-                <h3>Son Genel Tarama</h3>
-                <div class="val" id="metric-sweep" style="font-size: 15px; margin-top: 4px;">-</div>
-                <div class="sub" id="metric-sweep-sub">Katman 0 Public Sweep</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Action Banner -->
-    <div class="action-banner">
-        <div class="banner-info">
-            <h2>VFS Global Randevu Orkestrasyonu</h2>
-            <p><strong>Katman 0:</strong> Login olmadan, sıfır hesap riskiyle 5-8 dk aralıkla genel slot yoklaması. | <strong>Katman 1:</strong> Slot açıldığı an IMAP OTP ve milisaniyelik rezervasyon.</p>
-        </div>
-        <div class="banner-buttons">
-            <button class="btn btn-primary" id="btn-sweep" onclick="triggerSweep()" title="Tek çağrıda tüm merkezleri tarar (Login gerektirmez, ban riski yoktur)">
-                ⚡ Katman 0: Hızlı Slot Tara
+        <div class="hero-controls">
+            <button class="btn btn-success btn-lg" id="btn-live-bot" onclick="toggleLiveBot()">
+                🚀 7/24 Taramayı Başlat
             </button>
-            <button class="btn btn-success" id="btn-live-bot" onclick="toggleLiveBot()">
-                🚀 7/24 Canlı Botu Başlat
-            </button>
-            <button class="btn btn-outline" id="btn-test-phase1" onclick="startWorkflow()">
-                ▶ Aşama 1: Tarayıcı Testi
-            </button>
-            <button class="btn btn-outline" id="btn-settings" onclick="openSettingsModal()">
-                ⚙️ Ayarlar & Testler
+            <button class="btn btn-primary" id="btn-sweep" onclick="triggerSweep()" title="Tek seferlik hızlı kontrol yapar (ban riski sıfırdır)">
+                ⚡ Hemen Slot Kontrol Et
             </button>
             <button class="btn btn-danger" id="btn-stop-all" onclick="stopAll()" disabled>
                 ⏹ Durdur
@@ -866,92 +942,154 @@
         </div>
     </div>
 
-    <!-- Live Slots Detection Card -->
-    <div class="glass-card" style="border-color: rgba(16, 185, 129, 0.35);">
-        <div class="card-header">
-            <div class="card-title">
-                <span class="icon">🎯</span>
-                Açılan Randevu Slotları (Canlı Slot Akışı)
-            </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <span class="tag-pill" id="slots-count-pill" style="background: rgba(16, 185, 129, 0.15); color: var(--emerald); border-color: rgba(16, 185, 129, 0.3);">0 Slot Tespit Edildi</span>
-                <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="loadSlots()">Yenile</button>
+    <!-- 3-Step Wizard Quick Guide -->
+    <div class="wizard-grid">
+        <div class="wizard-step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+                <h4>Yolcu Bilgisini Ekleyin</h4>
+                <p>'Yeni Kişi Ekle' butonundan veya Excel yükleyerek randevu arayacağınız yolcuları sisteme tanımlayın.</p>
             </div>
         </div>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Merkez Adı</th>
-                        <th>Vize Kategorisi</th>
-                        <th>Açık Randevu Tarihi</th>
-                        <th>İlk Tespit Zamanı</th>
-                        <th>Durum & Eylem</th>
-                    </tr>
-                </thead>
-                <tbody id="slots-tbody">
-                    <tr>
-                        <td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">
-                            Henüz açık slot kaydı yok. 'Hızlı Slot Tara' butonuna basarak kontrol edebilirsiniz.
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="wizard-step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+                <h4>Taramayı Başlatın</h4>
+                <p>'7/24 Taramayı Başlat' butonuna basın. Bot ev IP'nizi yormadan arka planda kesintisiz tarama yapar.</p>
+            </div>
+        </div>
+        <div class="wizard-step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+                <h4>Slot Açılınca Haber Alın</h4>
+                <p>Randevu slotu çıktığında Telegram'dan sesli bildirim gelir. İster otomatik ister tek tıkla randevunuzu alın.</p>
+            </div>
         </div>
     </div>
 
-    <!-- Main Grid -->
-    <div class="dashboard-grid">
-        <!-- Left: Step-by-Step Live Pipeline -->
-        <div class="glass-card">
+    <!-- Key Metrics Cards -->
+    <div class="metrics-grid">
+        <div class="metric-card" onclick="switchTab('tab-applicants')" style="cursor: pointer;">
+            <div class="metric-icon" style="background: rgba(99, 102, 241, 0.15); color: var(--indigo);">👥</div>
+            <div class="metric-info">
+                <h3>Kayıtlı Başvuran</h3>
+                <div class="val" id="metric-applicants">0</div>
+                <div class="sub" id="metric-applicants-sub">Randevu bekleyen yolcular</div>
+            </div>
+        </div>
+        <div class="metric-card" onclick="switchTab('tab-applicants')" style="cursor: pointer;">
+            <div class="metric-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--emerald);">🎯</div>
+            <div class="metric-info">
+                <h3>Açılan Randevu</h3>
+                <div class="val" id="metric-slots">0</div>
+                <div class="sub">Tespit edilen slot</div>
+            </div>
+        </div>
+        <div class="metric-card" onclick="switchTab('tab-applicants')" style="cursor: pointer;">
+            <div class="metric-icon" style="background: rgba(6, 182, 212, 0.15); color: var(--cyan);">⚡</div>
+            <div class="metric-info">
+                <h3>Alınan Randevu</h3>
+                <div class="val" id="metric-booked">0</div>
+                <div class="sub">Başarıyla rezerve edilen</div>
+            </div>
+        </div>
+        <div class="metric-card" onclick="switchTab('tab-applicants')" style="cursor: pointer;">
+            <div class="metric-icon" style="background: rgba(245, 158, 11, 0.15); color: var(--amber);">⏱️</div>
+            <div class="metric-info">
+                <h3>Son Tarama Durumu</h3>
+                <div class="val" id="metric-sweep" style="font-size: 15px; margin-top: 5px;">Beklemede</div>
+                <div class="sub" id="metric-sweep-sub">Otomatik Slot Kontrolü</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs-header">
+        <button class="tab-btn active" id="btn-tab-applicants" onclick="switchTab('tab-applicants')">
+            🎯 Randevular ve Başvuranlar
+        </button>
+        <button class="tab-btn" id="btn-tab-monitor" onclick="switchTab('tab-monitor')">
+            🛠️ Canlı İzleme & Gelişmiş Konsol
+        </button>
+    </div>
+
+    <!-- TAB 1: Applicants & Slots (Simple & Intuitive) -->
+    <div id="tab-applicants" class="tab-content active">
+        <!-- Live Slots Detection Card -->
+        <div class="glass-card" style="border-color: rgba(16, 185, 129, 0.35);">
             <div class="card-header">
                 <div class="card-title">
-                    <span class="icon">⚡</span>
-                    Aşama 1: İnsansı Tarayıcı & Turnstile Akışı
+                    <span class="icon">🎯</span>
+                    Açık Bulunan Randevu Slotları
                 </div>
-                <span class="tag-pill" id="step-counter-pill">0 / 5 Tamamlandı</span>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span class="tag-pill" id="slots-count-pill" style="background: rgba(16, 185, 129, 0.15); color: var(--emerald); border-color: rgba(16, 185, 129, 0.3);">0 Slot Açık</span>
+                    <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="loadSlots()">Yenile</button>
+                </div>
             </div>
-
-            <div class="pipeline-list" id="pipeline-container">
-                <!-- Dynamically rendered via JS -->
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Merkez Şehir</th>
+                            <th>Vize Kategorisi</th>
+                            <th>Açık Randevu Tarihi</th>
+                            <th>İlk Görülme</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="slots-tbody">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--text-dim); padding: 24px;">
+                                Şu an VFS sisteminde açık randevu bulunmuyor. Bot arka planda otomatik olarak kontrol etmeye devam ediyor...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Right: Excel Upload & Applicants -->
+        <!-- Applicants Management Card -->
         <div class="glass-card">
             <div class="card-header">
                 <div class="card-title">
-                    <span class="icon">📊</span>
-                    Başvuran Yönetimi (Excel & SQLite)
+                    <span class="icon">👥</span>
+                    Randevu Bekleyen Başvuran Listesi
                 </div>
-                <span class="tag-pill" id="applicant-count-pill">0 Başvuran</span>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span class="tag-pill" id="applicant-count-pill">0 Kişi</span>
+                    <button class="btn btn-success" style="padding: 5px 12px; font-size: 12px;" onclick="openAddApplicantModal()">➕ Yeni Başvuran Ekle</button>
+                    <button class="btn btn-outline" style="padding: 5px 12px; font-size: 12px;" onclick="syncExcelNow()">🔄 Excel ile Eşitle</button>
+                </div>
             </div>
 
-            <!-- Upload Dropzone -->
+            <!-- Upload Dropzone (Optional) -->
             <div class="upload-zone" id="drop-zone" onclick="document.getElementById('excel-file-input').click()">
-                <div class="icon">📄</div>
-                <p><strong>Excel Dosyasını Buraya Sürükleyin</strong> veya tıklayarak seçin</p>
-                <span>(.xlsx formatı, 23 sütunlu plan.md / plan2.md şeması)</span>
+                <div class="icon">📊</div>
+                <p><strong>Toplu Kişi Yüklemek İçin Excel Dosyasını Buraya Bırakın</strong> veya tıklayın</p>
+                <span style="font-size: 11px; color: var(--text-dim);">(Dilerseniz yukarıdaki 'Yeni Kişi Ekle' butonuyla tek tek de ekleyebilirsiniz)</span>
                 <input type="file" id="excel-file-input" accept=".xlsx, .xls" style="display: none;" onchange="handleFileUpload(event)">
             </div>
 
-            <!-- Applicants Table Preview -->
+            <!-- Applicants Table -->
             <div class="table-wrapper">
                 <table>
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Ad Soyad</th>
-                            <th>Pasaport</th>
-                            <th>VFS E-posta</th>
-                            <th>Merkez</th>
+                            <th>Pasaport No</th>
+                            <th>VFS E-Posta</th>
+                            <th>Tercih Edilen Şehir</th>
+                            <th>Kategori</th>
+                            <th>İstenen Tarih Aralığı</th>
                             <th>Durum</th>
                             <th>İşlem</th>
                         </tr>
                     </thead>
                     <tbody id="applicants-tbody">
                         <tr>
-                            <td colspan="7" style="text-align: center; color: var(--text-dim);">Henüz Excel yüklenmedi. Şablon verileri gösteriliyor...</td>
+                            <td colspan="9" style="text-align: center; color: var(--text-dim); padding: 24px;">Henüz başvuran kaydı bulunmuyor. 'Yeni Kişi Ekle' butonuna basarak ekleyebilirsiniz.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -959,8 +1097,47 @@
         </div>
     </div>
 
-    <!-- Bottom Row: Terminal Logs & Live Visual Preview -->
-    <div class="dashboard-grid">
+    <!-- TAB 2: Monitoring & Advanced Console -->
+    <div id="tab-monitor" class="tab-content">
+        <!-- 2-Column Grid: Pipeline & Screenshot -->
+        <div class="dashboard-grid">
+            <!-- Left: Pipeline Steps -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">🤖</span>
+                        Tarayıcı & Cloudflare Turnstile Doğrulaması
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;" id="btn-test-phase1" onclick="startWorkflow()">
+                            ▶ Tarayıcıyı Test Et
+                        </button>
+                        <span class="tag-pill" id="step-counter-pill">0 / 5</span>
+                    </div>
+                </div>
+                <div class="pipeline-list" id="pipeline-container">
+                    <!-- Dynamically rendered via JS -->
+                </div>
+            </div>
+
+            <!-- Right: Screenshot Preview -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="icon">📸</span>
+                        Canlı Tarayıcı Ekranı
+                    </div>
+                    <span class="tag-pill" id="screenshot-timestamp">Ekran Bekleniyor</span>
+                </div>
+                <div class="screenshot-container" id="screenshot-box">
+                    <div class="screenshot-placeholder" id="screenshot-placeholder">
+                        Test başladığında Cloudflare Turnstile ve tarayıcı ekranı burada görünecektir.
+                    </div>
+                    <img id="live-screenshot-img" src="" alt="Canlı Ekran" style="display: none;" onclick="window.open(this.src, '_blank')">
+                </div>
+            </div>
+        </div>
+
         <!-- Terminal Logs -->
         <div class="terminal-card">
             <div class="terminal-header">
@@ -969,49 +1146,100 @@
                     <div class="mac-dot yellow"></div>
                     <div class="mac-dot green"></div>
                 </div>
-                <div class="terminal-title">Canlı Bot Konsolu & Telemetri</div>
+                <div class="terminal-title">Canlı Sistem & Bot Konsolu</div>
                 <div>
-                    <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="clearLogs()">Temizle</button>
+                    <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="clearLogs()">Logları Temizle</button>
                 </div>
             </div>
             <div class="terminal-body" id="terminal-body">
                 <div class="log-row">
                     <span class="log-time">--:--:--</span>
                     <span class="log-badge INFO">INFO</span>
-                    <span class="log-msg">Sistem hazır. 7/24 Canlı Bot veya Aşama 1 Tarayıcı Testini başlatabilirsiniz.</span>
+                    <span class="log-msg">Sistem hazır. 7/24 Canlı Taramayı başlatarak randevu aramaya başlayabilirsiniz.</span>
                 </div>
-            </div>
-        </div>
-
-        <!-- Screenshot Preview -->
-        <div class="glass-card">
-            <div class="card-header">
-                <div class="card-title">
-                    <span class="icon">📸</span>
-                    Canlı Ekran & Doğrulama Kanıtı
-                </div>
-                <span class="tag-pill" id="screenshot-timestamp">Henüz ekran görüntüsü yok</span>
-            </div>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
-                Botun Cloudflare Turnstile'ı geçtiğini ve formun aktifleştiğini canlı ekran görüntüsünden görebilirsiniz:
-            </p>
-            <div class="screenshot-container" id="screenshot-box">
-                <div class="screenshot-placeholder" id="screenshot-placeholder">
-                    Test başladığında son ekran görüntüsü buraya yansıyacaktır.
-                </div>
-                <img id="live-screenshot-img" src="" alt="Canlı Ekran" style="display: none;" onclick="window.open(this.src, '_blank')">
             </div>
         </div>
     </div>
 </div>
 
-<!-- Settings & Test Tools Modal -->
+<!-- Modal 1: Add Applicant Modal -->
+<div id="add-applicant-modal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="icon">👤</span>
+                Yeni Başvuran Kişi Ekle
+            </div>
+            <button onclick="closeAddApplicantModal()" style="background: transparent; border: none; color: var(--text-dim); font-size: 22px; cursor: pointer;">&times;</button>
+        </div>
+
+        <form id="add-applicant-form" onsubmit="submitNewApplicant(event)">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Ad *</label>
+                    <input type="text" id="new-ad" class="form-input" placeholder="Örn: Ahmet" required>
+                </div>
+                <div class="form-group">
+                    <label>Soyad *</label>
+                    <input type="text" id="new-soyad" class="form-input" placeholder="Örn: Yılmaz" required>
+                </div>
+                <div class="form-group">
+                    <label>Pasaport Numarası</label>
+                    <input type="text" id="new-pasaport" class="form-input" placeholder="Örn: U12345678">
+                </div>
+                <div class="form-group">
+                    <label>Doğum Tarihi (GG.AA.YYYY)</label>
+                    <input type="text" id="new-dogum" class="form-input" placeholder="Örn: 15.05.1990">
+                </div>
+                <div class="form-group">
+                    <label>Telefon Numarası</label>
+                    <input type="text" id="new-telefon" class="form-input" placeholder="Örn: 05321234567">
+                </div>
+                <div class="form-group">
+                    <label>VFS Giriş E-Postası *</label>
+                    <input type="email" id="new-email" class="form-input" placeholder="Örn: ahmet@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label>VFS Giriş Şifresi</label>
+                    <input type="password" id="new-sifre" class="form-input" placeholder="VFS Hesap Şifresi">
+                </div>
+                <div class="form-group">
+                    <label>Gmail 16 Haneli Uygulama Şifresi (OTP)</label>
+                    <input type="password" id="new-imap-sifre" class="form-input" placeholder="abcd efgh ijkl mnop">
+                </div>
+                <div class="form-group full">
+                    <label>Tercih Edilen Merkezler (Virgülle ayırın)</label>
+                    <input type="text" id="new-merkez" class="form-input" value="Istanbul,Ankara,Izmir,Bursa,Edirne" placeholder="Istanbul,Ankara,Izmir">
+                </div>
+                <div class="form-group">
+                    <label>Vize Kategorisi</label>
+                    <input type="text" id="new-kategori" class="form-input" value="Tourism" placeholder="Tourism">
+                </div>
+                <div class="form-group">
+                    <label>En Erken İstenen Tarih</label>
+                    <input type="text" id="new-baslangic" class="form-input" placeholder="Örn: 2026-11-01 veya 01/11/2026">
+                </div>
+                <div class="form-group">
+                    <label>En Geç İstenen Tarih</label>
+                    <input type="text" id="new-bitis" class="form-input" placeholder="Örn: 2026-12-31 veya 31/12/2026">
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button type="button" class="btn btn-outline" onclick="closeAddApplicantModal()">Vazgeç</button>
+                <button type="submit" class="btn btn-success">💾 Başvuranı Kaydet</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal 2: Settings & Integration Modal -->
 <div id="settings-modal" class="modal-overlay">
     <div class="modal-box">
         <div class="card-header">
             <div class="card-title">
                 <span class="icon">⚙️</span>
-                Sistem, Bildirim & Entegrasyon Ayarları
+                Sistem ve Telegram Bildirim Ayarları
             </div>
             <button onclick="closeSettingsModal()" style="background: transparent; border: none; color: var(--text-dim); font-size: 22px; cursor: pointer;">&times;</button>
         </div>
@@ -1024,8 +1252,8 @@
                     <span class="slider"></span>
                 </label>
                 <div>
-                    <strong style="color: #fff; font-size: 13px; display: block;">Otomatik Rezervasyon (Auto-Book)</strong>
-                    <span style="font-size: 11px; color: var(--text-muted);">Slot tespit edildiğinde anında Katman 1 rezervasyon isteğini gönderir.</span>
+                    <strong style="color: #fff; font-size: 13px; display: block;">Otomatik Randevu Al (Auto-Book)</strong>
+                    <span style="font-size: 11px; color: var(--text-muted);">Açık slot tespit edildiğinde hiç beklemeden Katman 1 rezervasyon isteğini gönderir.</span>
                 </div>
             </div>
 
@@ -1046,8 +1274,8 @@
             <!-- IMAP Settings -->
             <div class="form-group">
                 <label>
-                    <span>IMAP E-Posta / OTP Doğrulama Testi</span>
-                    <button class="btn btn-outline" style="padding: 2px 8px; font-size: 11px;" onclick="testImap()">📬 IMAP'i Test Et</button>
+                    <span>Gmail E-Posta / OTP Doğrulama Testi</span>
+                    <button class="btn btn-outline" style="padding: 2px 8px; font-size: 11px;" onclick="testImap()">📬 Test Et</button>
                 </label>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                     <input type="text" id="test-imap-email" class="form-input" placeholder="Test Gmail adresi">
@@ -1057,12 +1285,12 @@
 
             <!-- Proxy Pool -->
             <div class="form-group">
-                <label>Residential / ISP Proxy Havuzu (Her satıra bir proxy)</label>
-                <textarea id="cfg-proxies" class="form-input" rows="3" placeholder="http://kullanici:sifre@ip:port&#10;http://kullanici:sifre@ip2:port" style="font-family: monospace; font-size: 12px;"></textarea>
-                <span style="font-size: 11px; color: var(--text-dim); margin-top: 4px; display: block;">VFS datacenter IP'leri engeller. Sticky residential / ISP proxy kullanınız.</span>
+                <label>ISP / Residential Proxy Havuzu (Opsiyonel - Her satıra bir adet)</label>
+                <textarea id="cfg-proxies" class="form-input" rows="3" placeholder="http://user:pass@ip:port" style="font-family: monospace; font-size: 12px;"></textarea>
+                <span style="font-size: 11px; color: var(--text-dim); margin-top: 4px; display: block;">Ev IP'niz yerine proxy kullanmak isterseniz ekleyebilirsiniz.</span>
             </div>
 
-            <!-- Test Feedback Alert -->
+            <!-- Feedback Alert -->
             <div id="modal-feedback" style="display: none; padding: 10px 14px; border-radius: 8px; font-size: 12px;"></div>
 
             <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px;">
@@ -1073,21 +1301,70 @@
     </div>
 </div>
 
+<!-- Toast Container -->
+<div class="toast-container" id="toast-box"></div>
+
 <script>
     let pollInterval = null;
-    let autoScrollLogs = true;
     let isLiveBotRunning = false;
     let isPhase1Running = false;
+    let lastSeenSlotsCount = 0;
 
     document.addEventListener("DOMContentLoaded", () => {
         loadApplicants();
         loadSlots();
         pollStatus();
-        pollInterval = setInterval(pollStatus, 2000);
+        pollInterval = setInterval(pollStatus, 2500);
         setupDragAndDrop();
     });
 
-    // Ana Canlı Durum Sorgulama
+    // Sesli Bildirim (Web Audio API - harici dosya gerektirmez)
+    function playChime() {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+            osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5
+            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.6);
+        } catch(e) {}
+    }
+
+    // Toast Bildirim Gösterici
+    function showToast(msg, type = "success") {
+        const box = document.getElementById("toast-box");
+        const el = document.createElement("div");
+        el.className = `toast-msg ${type}`;
+        el.innerHTML = `<span>${type === 'success' ? '✅' : '⚠️'}</span> <span>${msg}</span>`;
+        box.appendChild(el);
+        setTimeout(() => {
+            el.style.opacity = "0";
+            el.style.transform = "translateX(50px)";
+            el.style.transition = "all 0.3s ease";
+            setTimeout(() => el.remove(), 300);
+        }, 4000);
+    }
+
+    // Tab Değiştirme
+    function switchTab(tabId) {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+        if (tabId === "tab-applicants") {
+            document.getElementById("btn-tab-applicants").classList.add("active");
+            document.getElementById("tab-applicants").classList.add("active");
+        } else {
+            document.getElementById("btn-tab-monitor").classList.add("active");
+            document.getElementById("tab-monitor").classList.add("active");
+        }
+    }
+
+    // Canlı Durum Sorgulama
     async function pollStatus() {
         try {
             const resp = await fetch("/api/status");
@@ -1098,155 +1375,193 @@
             const live = data.live_bot || {};
             const events = data.events || [];
 
-            isPhase1Running = !!p1.is_running;
             isLiveBotRunning = !!live.is_running;
+            isPhase1Running = !!p1.is_running;
 
-            // Buton durumları
-            const btnLive = document.getElementById("btn-live-bot");
-            const btnP1 = document.getElementById("btn-test-phase1");
-            const btnStop = document.getElementById("btn-stop-all");
-            const statusText = document.getElementById("system-status-text");
-            const statusPill = document.getElementById("system-status-pill");
-            const pulseDot = document.getElementById("system-pulse-dot");
-
-            if (isLiveBotRunning) {
-                btnLive.innerText = "⏹ Canlı Botu Durdur";
-                btnLive.className = "btn btn-danger";
-                btnP1.disabled = true;
-                btnStop.disabled = false;
-                statusText.innerText = "Canlı Bot Çalışıyor (Katman 0 + 1)";
-                statusPill.style.borderColor = "rgba(16, 185, 129, 0.4)";
-                statusPill.style.color = "var(--emerald)";
-                pulseDot.style.backgroundColor = "var(--emerald)";
-            } else if (isPhase1Running) {
-                btnLive.disabled = true;
-                btnP1.disabled = true;
-                btnStop.disabled = false;
-                statusText.innerText = "Aşama 1 Testi Yürütülüyor...";
-                statusPill.style.borderColor = "rgba(6, 182, 212, 0.4)";
-                statusPill.style.color = "var(--cyan)";
-                pulseDot.style.backgroundColor = "var(--cyan)";
-            } else {
-                btnLive.innerText = "🚀 7/24 Canlı Botu Başlat";
-                btnLive.className = "btn btn-success";
-                btnLive.disabled = false;
-                btnP1.disabled = false;
-                btnStop.disabled = true;
-                statusText.innerText = "Sistem Hazır";
-                statusPill.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                statusPill.style.color = "var(--text-muted)";
-                pulseDot.style.backgroundColor = "#94a3b8";
-            }
-
+            updateSystemStatusUI(isLiveBotRunning, isPhase1Running, p1.status);
+            updatePipeline(p1.steps || []);
+            updateLogs(events, p1.logs || []);
+            updateScreenshot(p1.latest_screenshot);
+            
             // Metrikler
-            const counts = live.counts || {};
-            document.getElementById("metric-applicants").innerText = counts.pending ?? 0;
-            document.getElementById("metric-applicants-sub").innerText = `Toplam: ${counts.total_applicants ?? 0} Başvuran`;
-            document.getElementById("metric-slots").innerText = counts.slots_seen ?? 0;
-            document.getElementById("metric-booked").innerText = counts.booked ?? 0;
-
-            const meta = live.meta || {};
-            if (meta.son_sweep && meta.son_sweep !== "Henüz yapılmadı") {
-                document.getElementById("metric-sweep").innerText = meta.son_sweep.split(" ")[1] || meta.son_sweep;
-            } else {
-                document.getElementById("metric-sweep").innerText = "Beklemede";
-            }
-
-            // Pipeline adımları
-            renderPipeline(p1.steps);
-
-            // Logları birleştir ve çiz (Phase 1 logs + SQLite events)
-            const combinedLogs = [];
-            if (p1.logs) {
-                p1.logs.forEach(l => combinedLogs.push({ time: l.time, level: l.level, msg: l.msg }));
-            }
-            if (events) {
-                events.forEach(e => {
-                    const timeOnly = (e.ts || "").split(" ")[1] || e.ts || "";
-                    combinedLogs.push({ time: timeOnly, level: e.level, msg: e.msg });
-                });
-            }
-            renderLogs(combinedLogs);
-
-            // Ekran görüntüsü
-            if (p1.latest_screenshot) {
-                const img = document.getElementById("live-screenshot-img");
-                const ph = document.getElementById("screenshot-placeholder");
-                const newSrc = `/api/screenshot/${p1.latest_screenshot}?t=${new Date().getTime()}`;
-                if (img.src !== newSrc) {
-                    img.src = newSrc;
-                    img.style.display = "block";
-                    ph.style.display = "none";
-                    document.getElementById("screenshot-timestamp").innerText = p1.latest_screenshot;
-                }
+            if (live.last_sweep) {
+                document.getElementById("metric-sweep").innerText = live.last_sweep.split(" ")[1] || live.last_sweep;
+                document.getElementById("metric-sweep-sub").innerText = live.last_sweep.split(" ")[0] || "Az önce kontrol edildi";
             }
         } catch (e) {
-            console.error("pollStatus error:", e);
+            console.warn("Poll hatası:", e);
         }
     }
 
-    // Pipeline Adımları
-    function renderPipeline(steps) {
-        const container = document.getElementById("pipeline-container");
-        if (!steps || steps.length === 0) return;
+    function updateSystemStatusUI(liveRunning, p1Running, p1Status) {
+        const pill = document.getElementById("system-status-pill");
+        const text = document.getElementById("system-status-text");
+        const liveBtn = document.getElementById("btn-live-bot");
+        const stopBtn = document.getElementById("btn-stop-all");
+        const p1Btn = document.getElementById("btn-test-phase1");
 
-        let completedCount = 0;
-        let html = "";
-
-        steps.forEach(s => {
-            if (s.status === "completed") completedCount++;
-            let statusLabel = s.status === "running" ? "Çalışıyor" : (s.status === "completed" ? "Tamamlandı" : (s.status === "failed" ? "Başarısız" : "Bekliyor"));
-            let iconContent = s.status === "running" ? "⏳" : (s.status === "completed" ? "✓" : (s.status === "failed" ? "✕" : s.id));
-
-            html += `
-            <div class="pipeline-item ${s.status}">
-                <div class="step-number">${iconContent}</div>
-                <div class="step-content">
-                    <div class="step-header-row">
-                        <div class="step-title">${s.title}</div>
-                        <div class="step-badge">${statusLabel}</div>
-                    </div>
-                    <div class="step-desc">${s.desc}</div>
-                    <div class="step-details">${s.details || ""}</div>
-                </div>
-            </div>`;
-        });
-
-        container.innerHTML = html;
-        document.getElementById("step-counter-pill").innerText = `${completedCount} / ${steps.length} Tamamlandı`;
-    }
-
-    // Konsol Logları
-    function renderLogs(logs) {
-        if (!logs || logs.length === 0) return;
-        const body = document.getElementById("terminal-body");
-        
-        let html = "";
-        logs.forEach(l => {
-            html += `
-            <div class="log-row">
-                <span class="log-time">${l.time}</span>
-                <span class="log-badge ${l.level}">${l.level}</span>
-                <span class="log-msg">${escapeHtml(l.msg)}</span>
-            </div>`;
-        });
-
-        body.innerHTML = html;
-        if (autoScrollLogs) {
-            body.scrollTop = body.scrollHeight;
-        }
-    }
-
-    function clearLogs() {
-        document.getElementById("terminal-body").innerHTML = "";
-    }
-
-    // 7/24 Canlı Bot Başlat/Durdur
-    async function toggleLiveBot() {
-        if (isLiveBotRunning) {
-            await fetch("/api/stop-bot", { method: "POST" });
+        if (liveRunning) {
+            pill.className = "live-status running";
+            text.innerText = "🟢 7/24 Randevu Taraması Aktif";
+            liveBtn.innerText = "⏹ Taramayı Durdur";
+            liveBtn.className = "btn btn-danger btn-lg";
+            stopBtn.disabled = false;
+            p1Btn.disabled = true;
+        } else if (p1Running) {
+            pill.className = "live-status running";
+            text.innerText = "🟡 Tarayıcı Testi Sürüyor...";
+            stopBtn.disabled = false;
+            liveBtn.disabled = true;
+            p1Btn.disabled = true;
         } else {
-            await fetch("/api/start-bot", { method: "POST" });
+            pill.className = "live-status";
+            text.innerText = "🟢 Sistem Hazır";
+            liveBtn.innerText = "🚀 7/24 Taramayı Başlat";
+            liveBtn.className = "btn btn-success btn-lg";
+            liveBtn.disabled = false;
+            stopBtn.disabled = true;
+            p1Btn.disabled = false;
+        }
+    }
+
+    // Başvuranları Getir
+    async function loadApplicants() {
+        try {
+            const resp = await fetch("/api/applicants");
+            const data = await resp.json();
+            const list = data.applicants || [];
+            
+            document.getElementById("metric-applicants").innerText = list.length;
+            document.getElementById("applicant-count-pill").innerText = `${list.length} Kişi`;
+
+            const tbody = document.getElementById("applicants-tbody");
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-dim); padding: 24px;">Henüz başvuran kaydı bulunmuyor. 'Yeni Kişi Ekle' butonuna basarak ekleyebilirsiniz.</td></tr>`;
+                return;
+            }
+
+            let bookedCount = 0;
+            tbody.innerHTML = list.map(ap => {
+                const durum = ap.durum || "PENDING";
+                if (durum === "BOOKED") bookedCount++;
+                const bas = ap.tarih_baslangic || "-";
+                const bit = ap.tarih_bitis || "-";
+                const tarihAralik = (bas !== "-" || bit !== "-") ? `${bas} - ${bit}` : "Fark Etmez";
+
+                return `
+                    <tr>
+                        <td><strong>#${ap.id}</strong></td>
+                        <td style="font-weight: 600;">${ap.ad || ""} ${ap.soyad || ""}</td>
+                        <td><code>${ap.pasaport_no || "-"}</code></td>
+                        <td>${ap.vfs_email || "-"}</td>
+                        <td><span class="tag-pill" style="font-size: 11px;">${ap.merkez_tercih || "Tümü"}</span></td>
+                        <td>${ap.kategori || "Tourism"}</td>
+                        <td style="font-size: 11px; color: var(--text-muted);">${tarihAralik}</td>
+                        <td><span class="badge-durum ${durum}">${durum}</span></td>
+                        <td>
+                            <div style="display: flex; gap: 6px;">
+                                <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px;" onclick="triggerBookApplicant(${ap.id})" title="Bu kişi için randevu al">⚡ Al</button>
+                                <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="deleteApplicant(${ap.id})" title="Sil">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+
+            document.getElementById("metric-booked").innerText = bookedCount;
+        } catch (e) {
+            console.error("Applicants yüklenemedi:", e);
+        }
+    }
+
+    // Açık Slotları Getir
+    async function loadSlots() {
+        try {
+            const resp = await fetch("/api/slots");
+            const data = await resp.json();
+            const slots = data.slots || [];
+
+            document.getElementById("metric-slots").innerText = slots.length;
+            document.getElementById("slots-count-pill").innerText = `${slots.length} Slot Açık`;
+
+            if (slots.length > lastSeenSlotsCount && lastSeenSlotsCount !== 0) {
+                playChime();
+                showToast("🔔 YENİ RANDEVU SLOTU TESPİT EDİLDİ!", "success");
+            }
+            lastSeenSlotsCount = slots.length;
+
+            const tbody = document.getElementById("slots-tbody");
+            if (slots.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 24px;">Şu an VFS sisteminde açık randevu bulunmuyor. Bot arka planda otomatik olarak kontrol etmeye devam ediyor...</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = slots.map(s => `
+                <tr style="background: rgba(16, 185, 129, 0.04);">
+                    <td style="font-weight: 700; color: #34d399;">📍 ${s.merkez}</td>
+                    <td>${s.kategori}</td>
+                    <td><strong style="color: #38bdf8; font-size: 14px;">📅 ${s.tarih}</strong></td>
+                    <td style="color: var(--text-dim); font-size: 11px;">${s.ilk_gorulme || "-"}</td>
+                    <td>
+                        <button class="btn btn-success" style="padding: 4px 10px; font-size: 11px;" onclick="switchTab('tab-applicants'); showToast('Lütfen başvuran yanındaki Rezerve Et butonuna basınız.')">
+                            ⚡ Rezerve Et
+                        </button>
+                    </td>
+                </tr>
+            `).join("");
+        } catch (e) {
+            console.error("Slots yüklenemedi:", e);
+        }
+    }
+
+    // Tek Seferlik Hızlı Slot Kontrolü
+    async function triggerSweep() {
+        const btn = document.getElementById("btn-sweep");
+        btn.disabled = true;
+        btn.innerText = "⏳ Kontrol Ediliyor...";
+        showToast("Slot kontrolü yapılıyor, lütfen bekleyiniz...");
+
+        try {
+            const resp = await fetch("/api/sweep-now", { method: "POST" });
+            const data = await resp.json();
+            if (data.success) {
+                const hits = data.hits || 0;
+                if (hits > 0) {
+                    playChime();
+                    showToast(`🎉 ${hits} AÇIK SLOT BULUNDU!`, "success");
+                } else {
+                    showToast("Kontrol tamamlandı: Şu an açık slot yok.", "success");
+                }
+                loadSlots();
+                loadApplicants();
+            } else {
+                showToast(`Kontrol uyarısı: ${data.message || 'Yanıt alınamadı'}`, "error");
+            }
+        } catch (e) {
+            showToast("Bağlantı hatası oluştu.", "error");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "⚡ Hemen Slot Kontrol Et";
+        }
+    }
+
+    // 7/24 Canlı Bot Başlat / Durdur
+    async function toggleLiveBot() {
+        const btn = document.getElementById("btn-live-bot");
+        btn.disabled = true;
+
+        if (isLiveBotRunning) {
+            const resp = await fetch("/api/stop-bot", { method: "POST" });
+            const data = await resp.json();
+            showToast(data.message || "Bot durduruldu.");
+        } else {
+            const resp = await fetch("/api/start-bot", { method: "POST" });
+            const data = await resp.json();
+            if (data.success) {
+                showToast("🚀 7/24 Canlı Tarama Başlatıldı! Arkanıza yaslanabilirsiniz.");
+            } else {
+                showToast(data.message || "Başlatılamadı.", "error");
+            }
         }
         pollStatus();
     }
@@ -1254,301 +1569,328 @@
     // Aşama 1 Tarayıcı Testini Başlat
     async function startWorkflow() {
         const resp = await fetch("/api/start", { method: "POST" });
-        const res = await resp.json();
-        if (!res.success) alert(res.message);
+        const data = await resp.json();
+        showToast(data.message || "Test başlatıldı.");
         pollStatus();
     }
 
-    // Tümünü Durdur
+    // Her Şeyi Durdur
     async function stopAll() {
         if (isLiveBotRunning) await fetch("/api/stop-bot", { method: "POST" });
         if (isPhase1Running) await fetch("/api/stop", { method: "POST" });
+        showToast("Tüm işlemler durduruldu.");
         pollStatus();
     }
 
-    // Başvuranları Yükle
-    async function loadApplicants() {
+    // Yeni Başvuran Ekleme Modalı
+    function openAddApplicantModal() {
+        document.getElementById("add-applicant-modal").style.display = "flex";
+    }
+    function closeAddApplicantModal() {
+        document.getElementById("add-applicant-modal").style.display = "none";
+    }
+
+    async function submitNewApplicant(e) {
+        e.preventDefault();
+        const payload = {
+            ad: document.getElementById("new-ad").value.trim(),
+            soyad: document.getElementById("new-soyad").value.trim(),
+            pasaport_no: document.getElementById("new-pasaport").value.trim(),
+            dogum_tarihi: document.getElementById("new-dogum").value.trim(),
+            telefon: document.getElementById("new-telefon").value.trim(),
+            vfs_email: document.getElementById("new-email").value.trim(),
+            vfs_sifre: document.getElementById("new-sifre").value.trim(),
+            imap_app_sifre: document.getElementById("new-imap-sifre").value.trim(),
+            merkez_tercih: document.getElementById("new-merkez").value.trim(),
+            kategori: document.getElementById("new-kategori").value.trim(),
+            tarih_baslangic: document.getElementById("new-baslangic").value.trim(),
+            tarih_bitis: document.getElementById("new-bitis").value.trim()
+        };
+
         try {
-            const resp = await fetch("/api/applicants");
-            const data = await resp.json();
-            const tbody = document.getElementById("applicants-tbody");
-            document.getElementById("applicant-count-pill").innerText = `${data.count} Başvuran`;
-
-            if (!data.applicants || data.applicants.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-dim);">Başvuran kaydı bulunamadı.</td></tr>`;
-                return;
-            }
-
-            let rowsHtml = "";
-            data.applicants.forEach(app => {
-                const durum = app.durum || 'PENDING';
-                const ref = app.referans_no ? `<br><small style="color: var(--emerald); font-family: monospace;">${app.referans_no}</small>` : '';
-                rowsHtml += `
-                <tr>
-                    <td><strong>#${app.id || '-'}</strong></td>
-                    <td><strong>${app.ad || ''} ${app.soyad || ''}</strong></td>
-                    <td><span style="font-family: monospace; color: var(--text-dim);">${app.pasaport_no || '-'}</span></td>
-                    <td><small style="color: var(--text-muted);">${app.vfs_email || '-'}</small></td>
-                    <td><span class="tag-pill" style="font-size: 10px;">${app.merkez_tercih || 'IST'}</span></td>
-                    <td><span class="badge-durum ${durum}">${durum}</span>${ref}</td>
-                    <td>
-                        <button class="btn btn-outline" style="padding: 2px 8px; font-size: 11px;" onclick="manualBook(${app.id})">⚡ Rezerve Et</button>
-                    </td>
-                </tr>`;
+            const resp = await fetch("/api/applicants/add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
             });
-            tbody.innerHTML = rowsHtml;
-        } catch (e) {
-            console.error("loadApplicants error:", e);
-        }
-    }
-
-    // Slotları Yükle
-    async function loadSlots() {
-        try {
-            const resp = await fetch("/api/slots");
             const data = await resp.json();
-            const tbody = document.getElementById("slots-tbody");
-            document.getElementById("slots-count-pill").innerText = `${data.count} Slot Tespit Edildi`;
-
-            if (!data.slots || data.slots.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">Henüz açık slot kaydı yok. 'Hızlı Slot Tara' butonuna basarak kontrol edebilirsiniz.</td></tr>`;
-                return;
+            if (data.success) {
+                showToast("✅ Başvuran başarıyla kaydedildi!", "success");
+                closeAddApplicantModal();
+                document.getElementById("add-applicant-form").reset();
+                loadApplicants();
+            } else {
+                showToast(data.message || "Kayıt başarısız", "error");
             }
-
-            let html = "";
-            data.slots.forEach(s => {
-                html += `
-                <tr>
-                    <td><strong>📍 ${escapeHtml(s.merkez || '')}</strong></td>
-                    <td><span class="tag-pill" style="font-size: 11px;">${escapeHtml(s.kategori || '')}</span></td>
-                    <td><strong style="color: var(--emerald); font-size: 14px;">📅 ${escapeHtml(s.tarih || '')}</strong></td>
-                    <td style="color: var(--text-muted); font-size: 12px;">${escapeHtml(s.ilk_gorulme || '')}</td>
-                    <td>
-                        <button class="btn btn-primary" style="padding: 3px 10px; font-size: 11px;" onclick="bookSlotForAny('${escapeHtml(s.tarih || '')}')">⚡ Hemen Rezerve Et</button>
-                    </td>
-                </tr>`;
-            });
-            tbody.innerHTML = html;
-        } catch (e) {
-            console.error("loadSlots error:", e);
+        } catch(err) {
+            showToast("Kayıt sırasında hata oluştu.", "error");
         }
     }
 
-    // Katman 0: Anlık Slot Taraması
-    async function triggerSweep() {
-        const btn = document.getElementById("btn-sweep");
-        btn.disabled = true;
-        btn.innerText = "⏳ Taranıyor...";
+    // Başvuran Sil
+    async function deleteApplicant(aid) {
+        if (!confirm(`#${aid} numaralı başvuranı silmek istediğinizden emin misiniz?`)) return;
         try {
-            const resp = await fetch("/api/sweep-now", { method: "POST" });
+            const resp = await fetch("/api/applicants/delete", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ applicant_id: aid })
+            });
             const data = await resp.json();
-            alert(data.message);
-            loadSlots();
-        } catch (e) {
-            alert("İstek hatası: " + e);
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "⚡ Katman 0: Hızlı Slot Tara";
-            pollStatus();
+            if (data.success) {
+                showToast("Başvuran silindi.");
+                loadApplicants();
+            } else {
+                showToast(data.message || "Silinemedi", "error");
+            }
+        } catch(e) {
+            showToast("Hata oluştu.", "error");
         }
     }
 
-    // Manuel Rezervasyon Tetikleme
-    async function manualBook(applicantId) {
-        const tarih = prompt(`Başvuran #${applicantId} için rezerve edilecek tarihi girin (Örn: 2026-11-15):`);
-        if (!tarih) return;
-
+    // Başvuran için Randevu Tetikle
+    async function triggerBookApplicant(aid) {
+        if (!confirm(`Başvuran #${aid} için rezervasyon isteği gönderilsin mi?`)) return;
+        showToast("Rezervasyon başlatılıyor...");
         try {
             const resp = await fetch("/api/book-now", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ applicant_id: applicantId, slot_date: tarih })
+                body: JSON.stringify({ applicant_id: aid })
             });
             const data = await resp.json();
-            alert(data.message);
+            if (data.success) {
+                showToast(`🎉 ${data.message}`, "success");
+            } else {
+                showToast(`Rezervasyon tamamlanamadı: ${data.message}`, "error");
+            }
             loadApplicants();
-        } catch (e) {
-            alert("Rezervasyon isteği gönderilemedi: " + e);
+        } catch(e) {
+            showToast("Bağlantı hatası.", "error");
         }
     }
 
-    async function bookSlotForAny(slotDate) {
-        const applicantId = prompt(`Açılan slot tarihi: ${slotDate}\nBu slotu hangi başvuran için rezerve etmek istiyorsunuz? (Başvuran ID'si giriniz):`);
-        if (!applicantId) return;
-
-        try {
-            const resp = await fetch("/api/book-now", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ applicant_id: parseInt(applicantId), slot_date: slotDate })
-            });
-            const data = await resp.json();
-            alert(data.message);
-            loadApplicants();
-        } catch (e) {
-            alert("Hata: " + e);
-        }
-    }
-
-    // Excel & SQLite Eşitle
+    // Excel Eşitle
     async function syncExcelNow() {
+        showToast("Excel & Veritabanı eşitleniyor...");
         try {
             const resp = await fetch("/api/sync-excel", { method: "POST" });
             const data = await resp.json();
-            alert(data.message);
-            loadApplicants();
-        } catch (e) {
-            alert("Eşitleme hatası: " + e);
+            if (data.success) {
+                showToast(data.message);
+                loadApplicants();
+            } else {
+                showToast(data.message, "error");
+            }
+        } catch(e) {
+            showToast("Eşitleme hatası.", "error");
         }
     }
 
-    // Excel Dosya Yükleme
-    async function handleFileUpload(event) {
-        const file = event.target.files[0];
+    // Excel Yükleme
+    async function handleFileUpload(e) {
+        const file = e.target.files[0];
         if (!file) return;
+
         const formData = new FormData();
         formData.append("file", file);
 
+        showToast("Excel yükleniyor...");
         try {
-            const resp = await fetch("/api/upload-excel", { method: "POST", body: formData });
-            const res = await resp.json();
-            alert(res.message);
-            loadApplicants();
-        } catch (e) {
-            alert("Dosya yüklenemedi: " + e);
+            const resp = await fetch("/api/upload-excel", {
+                method: "POST",
+                body: formData
+            });
+            const data = await resp.json();
+            if (data.success) {
+                showToast(data.message, "success");
+                loadApplicants();
+            } else {
+                showToast(data.message, "error");
+            }
+        } catch(err) {
+            showToast("Dosya yüklenemedi.", "error");
         }
+    }
+
+    function setupDragAndDrop() {
+        const drop = document.getElementById("drop-zone");
+        if (!drop) return;
+        ["dragenter", "dragover"].forEach(name => {
+            drop.addEventListener(name, (e) => { e.preventDefault(); drop.style.borderColor = "var(--sky)"; }, false);
+        });
+        ["dragleave", "drop"].forEach(name => {
+            drop.addEventListener(name, (e) => { e.preventDefault(); drop.style.borderColor = "rgba(255, 255, 255, 0.14)"; }, false);
+        });
+        drop.addEventListener("drop", (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length > 0) {
+                document.getElementById("excel-file-input").files = files;
+                handleFileUpload({ target: { files } });
+            }
+        });
     }
 
     // Ayarlar Modalı
     async function openSettingsModal() {
+        document.getElementById("settings-modal").style.display = "flex";
         try {
             const resp = await fetch("/api/settings");
             const data = await resp.json();
             document.getElementById("cfg-tg-token").value = data.telegram_token || "";
             document.getElementById("cfg-tg-chat").value = data.telegram_chat_id || "";
-            document.getElementById("cfg-proxies").value = (data.proxies || []).join("\n");
             document.getElementById("cfg-auto-book").checked = !!data.auto_book;
-            document.getElementById("modal-feedback").style.display = "none";
-            document.getElementById("settings-modal").style.display = "flex";
-        } catch (e) {
-            alert("Ayarlar yüklenemedi: " + e);
-        }
+            document.getElementById("cfg-proxies").value = (data.proxies || []).join("\n");
+        } catch(e) {}
     }
-
     function closeSettingsModal() {
         document.getElementById("settings-modal").style.display = "none";
+        document.getElementById("modal-feedback").style.display = "none";
     }
 
     async function saveSettings() {
-        const token = document.getElementById("cfg-tg-token").value;
-        const chat = document.getElementById("cfg-tg-chat").value;
-        const proxies = document.getElementById("cfg-proxies").value;
-        const autoBook = document.getElementById("cfg-auto-book").checked;
+        const payload = {
+            telegram_token: document.getElementById("cfg-tg-token").value.trim(),
+            telegram_chat_id: document.getElementById("cfg-tg-chat").value.trim(),
+            auto_book: document.getElementById("cfg-auto-book").checked,
+            proxy_list: document.getElementById("cfg-proxies").value.trim()
+        };
 
-        try {
-            const resp = await fetch("/api/settings", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    telegram_token: token,
-                    telegram_chat_id: chat,
-                    proxy_list: proxies,
-                    auto_book: autoBook
-                })
-            });
-            const res = await resp.json();
-            alert(res.message);
-            closeSettingsModal();
-        } catch (e) {
-            alert("Kaydetme hatası: " + e);
-        }
+        const resp = await fetch("/api/settings", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+        showToast(data.message || "Ayarlar kaydedildi.");
+        closeSettingsModal();
     }
 
     async function testTelegram() {
-        const token = document.getElementById("cfg-tg-token").value;
-        const chat = document.getElementById("cfg-tg-chat").value;
-        showModalFeedback("Telegram test mesajı gönderiliyor...", "info");
+        const token = document.getElementById("cfg-tg-token").value.trim();
+        const chat_id = document.getElementById("cfg-tg-chat").value.trim();
+        const fb = document.getElementById("modal-feedback");
+        fb.style.display = "block";
+        fb.style.background = "rgba(6, 182, 212, 0.15)";
+        fb.style.color = "var(--cyan)";
+        fb.innerText = "Telegram test mesajı gönderiliyor...";
 
-        try {
-            const resp = await fetch("/api/test-telegram", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token: token, chat_id: chat })
-            });
-            const res = await resp.json();
-            showModalFeedback(res.message, res.success ? "success" : "error");
-        } catch (e) {
-            showModalFeedback("Test isteği başarısız: " + e, "error");
+        const resp = await fetch("/api/test-telegram", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token, chat_id })
+        });
+        const data = await resp.json();
+        if (data.success) {
+            fb.style.background = "rgba(16, 185, 129, 0.2)";
+            fb.style.color = "var(--emerald)";
+            fb.innerText = "✅ " + data.message;
+        } else {
+            fb.style.background = "rgba(244, 63, 94, 0.2)";
+            fb.style.color = "var(--rose)";
+            fb.innerText = "❌ " + data.message;
         }
     }
 
     async function testImap() {
-        const email = document.getElementById("test-imap-email").value;
-        const pass = document.getElementById("test-imap-pass").value;
-        showModalFeedback("IMAP sunucusuna bağlanılıyor...", "info");
-
-        try {
-            const resp = await fetch("/api/test-imap", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ user: email, password: pass })
-            });
-            const res = await resp.json();
-            showModalFeedback(res.message, res.success ? "success" : "error");
-        } catch (e) {
-            showModalFeedback("IMAP test hatası: " + e, "error");
-        }
-    }
-
-    function showModalFeedback(msg, type) {
+        const user = document.getElementById("test-imap-email").value.trim();
+        const password = document.getElementById("test-imap-pass").value.trim();
         const fb = document.getElementById("modal-feedback");
         fb.style.display = "block";
-        fb.innerText = msg;
-        if (type === "success") {
+        fb.style.background = "rgba(6, 182, 212, 0.15)";
+        fb.style.color = "var(--cyan)";
+        fb.innerText = "Gmail IMAP bağlantısı test ediliyor...";
+
+        const resp = await fetch("/api/test-imap", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user, password })
+        });
+        const data = await resp.json();
+        if (data.success) {
             fb.style.background = "rgba(16, 185, 129, 0.2)";
             fb.style.color = "var(--emerald)";
-            fb.style.border = "1px solid rgba(16, 185, 129, 0.4)";
-        } else if (type === "error") {
+            fb.innerText = "✅ " + data.message;
+        } else {
             fb.style.background = "rgba(244, 63, 94, 0.2)";
             fb.style.color = "var(--rose)";
-            fb.style.border = "1px solid rgba(244, 63, 94, 0.4)";
-        } else {
-            fb.style.background = "rgba(6, 182, 212, 0.2)";
-            fb.style.color = "var(--cyan)";
-            fb.style.border = "1px solid rgba(6, 182, 212, 0.4)";
+            fb.innerText = "❌ " + data.message;
         }
     }
 
-    // Sürükle Bırak
-    function setupDragAndDrop() {
-        const dropZone = document.getElementById("drop-zone");
-        if (!dropZone) return;
+    // Pipeline Güncelle
+    function updatePipeline(steps) {
+        const container = document.getElementById("pipeline-container");
+        if (!container || steps.length === 0) return;
 
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
-        });
+        let completed = 0;
+        container.innerHTML = steps.map(s => {
+            if (s.status === "success") completed++;
+            return `
+                <div class="pipeline-step ${s.status}">
+                    <div class="step-icon-badge">
+                        ${s.status === 'success' ? '✓' : (s.status === 'running' ? '⏳' : s.id)}
+                    </div>
+                    <div>
+                        <div style="font-weight: 700; font-size: 13px; color: #fff;">${s.title}</div>
+                        <div style="font-size: 11px; color: var(--text-muted);">${s.details || s.desc}</div>
+                    </div>
+                </div>
+            `;
+        }).join("");
 
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            if (dt.files && dt.files.length > 0) {
-                const input = document.getElementById('excel-file-input');
-                input.files = dt.files;
-                handleFileUpload({ target: input });
-            }
-        });
+        document.getElementById("step-counter-pill").innerText = `${completed} / ${steps.length} Tamamlandı`;
     }
 
-    function escapeHtml(text) {
-        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-        return text ? String(text).replace(/[&<>"']/g, m => map[m]) : "";
+    // Logları Güncelle
+    function updateLogs(dbEvents, p1Logs) {
+        const body = document.getElementById("terminal-body");
+        if (!body) return;
+
+        const combined = [];
+        (dbEvents || []).forEach(e => {
+            combined.push({ time: (e.ts || "").split(" ")[1] || e.ts, level: e.level, msg: e.msg });
+        });
+        (p1Logs || []).forEach(l => {
+            combined.push({ time: l.time, level: l.level, msg: l.msg });
+        });
+
+        if (combined.length === 0) return;
+
+        body.innerHTML = combined.map(c => `
+            <div class="log-row">
+                <span class="log-time">${c.time || '--:--:--'}</span>
+                <span class="log-badge ${c.level || 'INFO'}">${c.level || 'INFO'}</span>
+                <span class="log-msg">${c.msg || ''}</span>
+            </div>
+        `).join("");
+    }
+
+    async function clearLogs() {
+        await fetch("/api/clear-logs", { method: "POST" });
+        document.getElementById("terminal-body").innerHTML = `
+            <div class="log-row">
+                <span class="log-time">--:--:--</span>
+                <span class="log-badge INFO">INFO</span>
+                <span class="log-msg">Loglar temizlendi.</span>
+            </div>
+        `;
+        showToast("Loglar temizlendi.");
+    }
+
+    function updateScreenshot(filename) {
+        const box = document.getElementById("screenshot-box");
+        const img = document.getElementById("live-screenshot-img");
+        const placeholder = document.getElementById("screenshot-placeholder");
+        const tsPill = document.getElementById("screenshot-timestamp");
+
+        if (filename) {
+            img.src = `/api/screenshot/${filename}?t=${Date.now()}`;
+            img.style.display = "block";
+            placeholder.style.display = "none";
+            tsPill.innerText = "Canlı Görüntü";
+        }
     }
 </script>
 

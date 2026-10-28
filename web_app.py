@@ -177,6 +177,69 @@ def sync_excel_now():
         return jsonify({"success": False, "message": f"Eşitleme hatası: {e}"}), 500
 
 
+@app.route("/api/applicants/add", methods=["POST"])
+def add_applicant():
+    """Kullanıcının formdan girdiği yeni başvuranı SQLite'a ekler."""
+    data = request.json or {}
+    ad = data.get("ad", "").strip()
+    soyad = data.get("soyad", "").strip()
+    email = data.get("vfs_email", "").strip()
+    if not (ad and soyad and email):
+        return jsonify({"success": False, "message": "Ad, Soyad ve VFS E-posta alanları zorunludur."}), 400
+    try:
+        DB.x(
+            """INSERT INTO applicants (
+                ad, soyad, pasaport_no, dogum_tarihi, uyruk, telefon,
+                vfs_email, vfs_sifre, imap_app_sifre, imap_sunucu,
+                merkez_tercih, kategori, tarih_baslangic, tarih_bitis, durum, guncelleme_zamani
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', ?)""",
+            (
+                ad, soyad, data.get("pasaport_no", "").strip(), data.get("dogum_tarihi", "").strip(),
+                data.get("uyruk", "TUR").strip() or "TUR", data.get("telefon", "").strip(),
+                email, data.get("vfs_sifre", "").strip(),
+                data.get("imap_app_sifre", "").strip(), data.get("imap_sunucu", "imap.gmail.com").strip() or "imap.gmail.com",
+                data.get("merkez_tercih", "Istanbul,Ankara").strip(), data.get("kategori", "Tourism").strip(),
+                data.get("tarih_baslangic", "").strip(), data.get("tarih_bitis", "").strip(),
+                DB.now()
+            )
+        )
+        write_outputs()
+        msg = f"Başvuran '{ad} {soyad}' başarıyla eklendi."
+        DB.log("INFO", msg)
+        runner_instance.add_log("SUCCESS", msg)
+        return jsonify({"success": True, "message": msg})
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Kayıt hatası: {e}"}), 400
+
+
+@app.route("/api/applicants/delete", methods=["POST"])
+def delete_applicant():
+    """Belirtilen başvuranı SQLite'tan kaldırır."""
+    data = request.json or {}
+    aid = data.get("applicant_id")
+    if not aid:
+        return jsonify({"success": False, "message": "Başvuran ID'si zorunludur."}), 400
+    try:
+        DB.x("DELETE FROM applicants WHERE id=?", (int(aid),))
+        write_outputs()
+        msg = f"Başvuran #{aid} silindi."
+        DB.log("INFO", msg)
+        return jsonify({"success": True, "message": msg})
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Silme hatası: {e}"}), 400
+
+
+@app.route("/api/clear-logs", methods=["POST"])
+def clear_logs():
+    """Konsol ve SQLite olay loglarını temizler."""
+    try:
+        DB.x("DELETE FROM events")
+        runner_instance.clear_logs()
+        return jsonify({"success": True, "message": "Konsol ve loglar temizlendi."})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 400
+
+
 @app.route("/api/slots")
 def get_slots():
     """SQLite'ta kayıtlı görülen tüm randevu slotlarını döndürür."""
