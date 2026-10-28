@@ -202,24 +202,41 @@ class VfsHttp:
                 except Exception:
                     wait = 30
                 wait += int(CFG["polling"]["delay_honor_margin_s"])
-                DB.log("INFO", f"409 Repeated Delay → {wait}s bekleniyor")
+                DB.log("INFO", f"409 Repeated Delay -> {wait}s bekleniyor")
                 await asyncio.sleep(wait)
                 continue
 
             if code in (403, 429):
-                # cf_clearance bayatlamış olabilir → cookie'yi yak
+                try:
+                    rl = str((resp.json() or {}).get("code", ""))
+                except Exception:
+                    rl = ""
+
+                if code == 429 or rl.startswith("429"):
+                    # IP hız sınırı: cf_clearance GEÇERLİ, koru (yeniden Chrome açma)
+                    self.proxy_mgr.penalize(proxy)
+                    if attempt < retries - 1:
+                        wait = min(60 * (attempt + 1) ** 2, 1800)
+                        DB.log("WARN", f"429202 hız sınırı -> {wait}s bekleniyor (clearance korundu)")
+                        await asyncio.sleep(wait)
+                        continue
+                    return resp
+
+                # 403: clearance gerçekten bayat olabilir -> cookie'yi yak
                 DB.session_save(identity, cf_clearance=None, cf_expires_at=0)
                 self.proxy_mgr.penalize(proxy)
 
-                # C3: Havuz boşsa bekleme tavanını 60s'ye indir; havuz doluysa sıradaki IP'ye geç
-                if not self.proxy_mgr.pool:
-                    wait = min(2 ** attempt * 5 + random.random() * 5, 60)
-                else:
-                    wait = min(2 ** attempt * 2 + random.random() * 2, 30)
+                if attempt < retries - 1:
+                    # C3: Havuz boşsa bekleme tavanını 60s'ye indir; havuz doluysa sıradaki IP'ye geç
+                    if not self.proxy_mgr.pool:
+                        wait = min(2 ** attempt * 5 + random.random() * 5, 60)
+                    else:
+                        wait = min(2 ** attempt * 2 + random.random() * 2, 30)
 
-                await asyncio.sleep(wait)
-                proxy = self.proxy_mgr.healthy(identity)
-                continue
+                    await asyncio.sleep(wait)
+                    proxy = self.proxy_mgr.healthy(identity)
+                    continue
+                return resp
 
             if code == 401 and sess.get("authorize"):
                 DB.session_save(identity, authorize=None)  # JWT bayat → yeniden login

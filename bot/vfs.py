@@ -27,7 +27,18 @@ class VfsClient:
         }
         headers = {}
         if CFG["portal"]["x_auth_token"]:
-            headers["x-auth-token"] = CFG["portal"]["x_auth_token"]
+            token_val = CFG["portal"]["x_auth_token"].strip()
+            token_hdr = (CFG["portal"].get("token_header") or "authorization").strip().lower()
+            if token_hdr == "authorization":
+                if not token_val.lower().startswith("bearer "):
+                    token_val = f"Bearer {token_val}"
+                headers["authorization"] = token_val
+            elif token_hdr in ("x-auth-token", "x_auth_token"):
+                if token_val.lower().startswith("bearer "):
+                    token_val = token_val[7:].strip()
+                headers["x-auth-token"] = token_val
+            else:
+                headers[token_hdr] = token_val
 
         r = await self.http.request(
             "POST", url, identity="public", json_body=body,

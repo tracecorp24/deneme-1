@@ -10,6 +10,7 @@ portal:
   mission_code: "bgr"
   culture_code: "en-US"
   login_path: "/login"
+  token_header: "authorization"
 
 api:
   base: "https://lift-api.vfsglobal.com"
@@ -31,7 +32,7 @@ categories:
   - { code: "LONGSTAY", match: "Long Stay" }
 
 polling:
-  public_interval_s: [300, 480]
+  public_interval_s: [900, 1200]
   login_verify_interval_s: [1200, 1800]
   api_pause_s: [10, 20]
   night_window: ["02:00", "05:00"]

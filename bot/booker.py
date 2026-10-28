@@ -85,14 +85,20 @@ class LoginWorker:
             res_start = await self.vfs.login_start(account_id, ap["vfs_sifre"])
             res_str = str(res_start) if res_start else ""
 
-            # E5: 429202 / 24 saat hesap kilidi kontrolü
-            if "429202" in res_str or "24" in res_str.lower() and "hour" in res_str.lower():
-                DB.set_status(ap["id"], "LOCKED_24H", son_hata="VFS 24 saat hesap kilidi (429202)")
+            # 1. Gerçek 24 Saatlik Hesap Kilidi (Kullanıcı hesabı bloke)
+            if ("24" in res_str.lower() and "hour" in res_str.lower()) or "account locked" in res_str.lower():
+                DB.set_status(ap["id"], "LOCKED_24H", son_hata="VFS 24 saat hesap kilidi")
                 DB.budget_lock(budget_key, 21600)  # 6 saat cooldown
                 if self.notify:
                     await self.notify.send(f"🚨 <b>VFS 24 Saat Hesap Kilidi:</b> {account_id} -> 6 saat bekleme moduna alındı.")
-                DB.log("WARN", f"24 saat hesap kilidi tespit edildi (429202): {account_id}", ap["id"])
+                DB.log("WARN", f"24 saat hesap kilidi tespit edildi: {account_id}", ap["id"])
                 return False
+
+            # 2. IP Hız Sınırı (429 / 429202: IP seviyesi sınır, hesabı kitleme!)
+            if "429202" in res_str or (isinstance(res_start, dict) and str(res_start.get("code")) == "429202"):
+                DB.log("WARN", f"Login IP hız sınırı (429202): Hesap kilitlenmedi, bekleniyor: {account_id}", ap["id"])
+                await asyncio.sleep(min(60 * (deneme + 1), 300))
+                continue
 
             # E4: login_start hata kodu dönerse OTP bekleme, sonraki denemeye geç
             if not res_start:

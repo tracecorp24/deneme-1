@@ -96,6 +96,54 @@ Toplam POST / submit çağrısı: 1
 Gate F BASARIYLA GECILDI!
 ```
 
+### Konsol Çıktısı 6: Token Başlığı Varyant Testi (`python scripts/test_token_variants.py`)
+```text
+=================================================================
+ VFS LIFT API TOKEN BAŞLIĞI VARYANT TESTİ
+ Endpoint: https://lift-api.vfsglobal.com/appointment/centerwithearliestslot
+=================================================================
+Ham Token: Bearer 5YpTBRikGN59YHwM18CyGr5...
+Bearer Token: Bearer 5YpTBRikGN59YHwM18CyGr5...
+Clean Token: 5YpTBRikGN59YHwM18CyGr5F43bFua...
+
+[*] cf_clearance doğrulanıyor...
+    cf_clearance durumu: OK
+
+--- İstek Gönderiliyor: Varyant A: Token'sız (Boş) ---
+    Ek Başlıklar: []
+[HTTP] POST https://lift-api.vfsglobal.com/appointment/centerwithearliestslot -> Status: 429 | Body: { "code": "429202", "description": "" }
+    -> Status: 429
+
+--- İstek Gönderiliyor: Varyant B: Sadece x-auth-token (Clean) ---
+    Ek Başlıklar: ['x-auth-token']
+[HTTP] POST https://lift-api.vfsglobal.com/appointment/centerwithearliestslot -> Status: 429 | Body: { "code": "429202", "description": "" }
+    -> Status: 429
+
+--- İstek Gönderiliyor: Varyant B2: Sadece x-auth-token (Bearer) ---
+    Ek Başlıklar: ['x-auth-token']
+[HTTP] POST https://lift-api.vfsglobal.com/appointment/centerwithearliestslot -> Status: 429 | Body: { "code": "429202", "description": "" }
+    -> Status: 429
+
+--- İstek Gönderiliyor: Varyant C: Sadece authorization (Bearer) ---
+    Ek Başlıklar: ['authorization']
+[HTTP] POST https://lift-api.vfsglobal.com/appointment/centerwithearliestslot -> Status: 429 | Body: { "code": "429202", "description": "" }
+    -> Status: 429
+
+--- İstek Gönderiliyor: Varyant D: Hem authorization hem x-auth-token ---
+    Ek Başlıklar: ['authorization', 'x-auth-token']
+[HTTP] POST https://lift-api.vfsglobal.com/appointment/centerwithearliestslot -> Status: 429 | Body: { "code": "429202", "description": "" }
+    -> Status: 429
+
+=================================================================
+ VARYANT TESTİ KARŞILAŞTIRMA TABLOSU
+=================================================================
+• Varyant A: Token'sız (Boş)                   : HTTP 429 | { "code": "429202" }
+• Varyant B: Sadece x-auth-token (Clean)       : HTTP 429 | { "code": "429202" }
+• Varyant B2: Sadece x-auth-token (Bearer)     : HTTP 429 | { "code": "429202" }
+• Varyant C: Sadece authorization (Bearer)     : HTTP 429 | { "code": "429202" }
+• Varyant D: Hem authorization hem x-auth-token: HTTP 429 | { "code": "429202" }
+```
+
 ---
 
 ## 3. Canlı Ağ Testi Analiz ve Karar Matrisi
@@ -103,5 +151,9 @@ Gate F BASARIYLA GECILDI!
 | Parametre | Sonuç | Durum Açıklaması |
 | :--- | :--- | :--- |
 | **Cloudflare 403201 Engeli** | **AŞILDI (YOK)** | `cf_clearance` ve `curl_cffi` Chrome TLS impersonation başarıyla doğrulandı; Cloudflare WAF bot katmanı baypas edildi. |
-| **VFS Lift API Durumu** | **HTTP 429 (`429202`)** | VFS Global'in ev IP'sine uyguladığı uygulama seviyesi hız sınırı (rate limit cooldown). Çözüm: ISP proxy rotasyonu. |
+| **429202 Hız Sınırı & Clearance Korunumu** | **KORUNDU** | HTTP 429 durumunda `cf_clearance` çerezi silinmez, gereksiz Chrome açılmaz; IP seviyesi bekleme yapılır. |
+| **Hesap Kilidi Ayrımı** | **DÜZELTİLDİ** | `booker.py` içinde 429202 (IP hız sınırı) ile 24 saatlik gerçek hesap kilidi ayrıldı. 429202 nedeniyle hesaplar 6 saat uyutulmaz. |
+| **Token Başlığı Desteği** | **DİNAMİK** | `config.yaml` içine `portal.token_header: "authorization"` eklendi; hem `authorization: Bearer ...` hem `x-auth-token` desteklendi. |
+| **VFS Lift API Durumu** | **HTTP 429 (`429202`)** | VFS Global'in ev IP'sine uyguladığı uygulama seviyesi hız sınırı (rate limit cooldown). Token'sız istek dahi 429202 döndüğü için engel IP bazlıdır. |
+| **Sonraki Doğrulama Adımı** | **Telefon Hotspot IP** | Telefonun hücresel bağlantısından (hotspot) tek istek atılarak ev IP'sinin flag durumu doğrulanabilir; 200 dönerse ISP proxy rotasyonu kesin çözümdür. |
 | **Kural Uyumu** | **TAM UYUM** | Kullanıcı talimatı gereği gerçek test çıktısı alınıp belgelenene kadar proxy havuzu ve `auto_book` açılmamış, güvenli modda kalınmıştır. |

@@ -36,6 +36,11 @@ def load_config() -> Cfg:
     raw["portal"].setdefault("culture_code", "en-US")
     raw["portal"].setdefault("login_path", "/login")
     
+    raw["portal"].setdefault("token_header", "authorization")
+    raw["portal"]["token_header"] = (
+        os.getenv("VFS_TOKEN_HEADER") or raw["portal"].get("token_header", "authorization")
+    ).strip().lower()
+
     # A2: x_auth_token env override (boş string gelirse config.yaml'daki değere düş)
     raw["portal"]["x_auth_token"] = (
         os.getenv("VFS_X_TOKEN") or os.getenv("PORTAL_X_AUTH_TOKEN") or raw["portal"].get("x_auth_token", "")
