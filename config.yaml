@@ -1,10 +1,15 @@
+# =====================================================================
+# VFS Global Bulgaristan Vize Botu - Varsayılan Yapılandırma
+# Sırlar, tokenlar, proxy listesi ve özel ayarlar .env dosyasından okunur.
+# .env dosyasını oluşturmak için .env.example şablonunu kullanınız.
+# =====================================================================
+
 portal:
   base: "https://visa.vfsglobal.com/tur/en/bgr"
   country_code: "tur"
   mission_code: "bgr"
   culture_code: "en-US"
   login_path: "/login"
-  x_auth_token: ""
 
 api:
   base: "https://lift-api.vfsglobal.com"
@@ -47,7 +52,6 @@ http:
   max_retries: 3
 
 proxy:
-  isp_pool: []
   health_cooldown_s: 900
 
 otp:
@@ -65,8 +69,6 @@ excel:
   sync_interval_s: 30
 
 telegram:
-  token: ""
-  chat_id: ""
   heartbeat_s: 600
 
 booking:

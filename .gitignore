@@ -30,6 +30,7 @@ venv/
 # Environment and Secrets
 .env
 .env.*
+!.env.example
 *.local
 token.txt
 *.token
