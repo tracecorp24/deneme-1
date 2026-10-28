@@ -64,7 +64,7 @@ async def test_variants():
         ok = await http.ensure_cf_clearance("public", proxy_mgr.healthy("public"))
         print(f"    cf_clearance durumu: {'OK' if ok else 'YOK'}\n")
 
-        for name, headers in variants:
+        for i, (name, headers) in enumerate(variants):
             print(f"--- İstek Gönderiliyor: {name} ---")
             print(f"    Ek Başlıklar: {list(headers.keys())}")
             
@@ -79,9 +79,9 @@ async def test_variants():
                 retries=1,
             )
 
+            status = resp.status_code if resp else "None"
+            text_snippet = (resp.text[:250].replace("\n", " ").replace("\r", "")) if resp else "Hata"
             if resp:
-                status = resp.status_code
-                text_snippet = resp.text[:250].replace("\n", " ").replace("\r", "")
                 print(f"    -> Status: {status}")
                 print(f"    -> Body: {text_snippet}")
                 results.append((name, status, text_snippet))
@@ -89,7 +89,13 @@ async def test_variants():
                 print("    -> Yanıt Alınamadı (None)")
                 results.append((name, "None", "Hata"))
             print()
-            await asyncio.sleep(2)
+
+            if i < len(variants) - 1:
+                # Son yanıtın durumuna göre bekle: 429 veya hız sınırı varsa 60s, normalse 15s
+                is_rate_limited = (status == 429 or "429202" in text_snippet)
+                wait_sec = 60 if is_rate_limited else 15
+                print(f"    [*] Sonraki varyant öncesi {wait_sec}s bekleniyor ({'429 hız sınırı' if is_rate_limited else 'güvenli aralık'})...\n")
+                await asyncio.sleep(wait_sec)
 
     finally:
         await http.close()

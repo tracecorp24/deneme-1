@@ -188,7 +188,6 @@ class VfsHttp:
 
             code = resp.status_code
             DB.log("INFO" if code == 200 else "WARN", f"[HTTP] {method} {url} -> Status: {code} | Body: {resp.text[:150]}")
-            print(f"[HTTP] {method} {url} -> Status: {code} | Body: {resp.text[:150]}")
 
             if code == 200:
                 self.proxy_mgr.mark_ok(proxy)

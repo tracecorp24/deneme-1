@@ -101,7 +101,7 @@ class VfsClient:
         if not payload:
             return False
         err = payload.get("error") or {}
-        if err.get("code") == 1035:
+        if str(err.get("code")) == "1035":
             return False
         return bool(payload.get("earliestDate"))
 
