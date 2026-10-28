@@ -42,6 +42,7 @@ async def amain() -> None:
             excel_sync_loop(),
             poller.run(),
             notify.heartbeat_loop(),
+            notify.telegram_polling_loop(),
         )
     finally:
         await http.close()

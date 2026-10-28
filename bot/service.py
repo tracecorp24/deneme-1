@@ -105,7 +105,8 @@ class BotService:
             tasks = [
                 asyncio.create_task(self.poller.run()),
                 asyncio.create_task(excel_sync_loop()),
-                asyncio.create_task(self.notify.heartbeat_loop())
+                asyncio.create_task(self.notify.heartbeat_loop()),
+                asyncio.create_task(self.notify.telegram_polling_loop()),
             ]
 
             # Durdurma sinyalini bekle

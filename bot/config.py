@@ -36,10 +36,9 @@ def load_config() -> Cfg:
     raw["portal"].setdefault("culture_code", "en-US")
     raw["portal"].setdefault("login_path", "/login")
     
-    # A2: x_auth_token env override
-    raw["portal"]["x_auth_token"] = os.getenv(
-        "VFS_X_TOKEN", 
-        os.getenv("PORTAL_X_AUTH_TOKEN", raw["portal"].get("x_auth_token", ""))
+    # A2: x_auth_token env override (boş string gelirse config.yaml'daki değere düş)
+    raw["portal"]["x_auth_token"] = (
+        os.getenv("VFS_X_TOKEN") or os.getenv("PORTAL_X_AUTH_TOKEN") or raw["portal"].get("x_auth_token", "")
     ).strip()
 
     # API Endpoints
@@ -60,7 +59,7 @@ def load_config() -> Cfg:
     
     # A2: http.headless env override
     env_headless = os.getenv("VFS_HEADLESS")
-    if env_headless is not None:
+    if env_headless is not None and env_headless.strip():
         raw["http"]["headless"] = env_headless.strip().lower() in ("true", "1", "yes")
     else:
         raw["http"].setdefault("headless", False)
@@ -82,8 +81,8 @@ def load_config() -> Cfg:
     raw.setdefault("proxy", {})
     raw["proxy"].setdefault("health_cooldown_s", 900)
     
-    # A2: proxy.isp_pool env override (virgülle ayrılmış)
-    env_proxies = os.getenv("VFS_PROXIES", os.getenv("PROXY_ISP_POOL"))
+    # A2: proxy.isp_pool env override (virgülle ayrılmış, boşsa config.yaml'a düş)
+    env_proxies = (os.getenv("VFS_PROXIES") or os.getenv("PROXY_ISP_POOL") or "").strip()
     if env_proxies:
         raw["proxy"]["isp_pool"] = [p.strip() for p in env_proxies.split(",") if p.strip()]
     else:
@@ -91,32 +90,33 @@ def load_config() -> Cfg:
 
     # OTP Ayarları
     raw.setdefault("otp", {})
-    raw["otp"]["imap_port"] = int(os.getenv("OTP_IMAP_PORT", raw["otp"].get("imap_port", 993)))
-    raw["otp"]["sender_filter"] = os.getenv("OTP_SENDER", raw["otp"].get("sender_filter", "vfsglobal"))
+    raw["otp"]["imap_port"] = int(os.getenv("OTP_IMAP_PORT") or raw["otp"].get("imap_port", 993))
+    raw["otp"]["sender_filter"] = (os.getenv("OTP_SENDER") or raw["otp"].get("sender_filter", "vfsglobal")).strip()
     raw["otp"].setdefault("subject_filter", ["OTP", "verification", "code", "One Time Password"])
     raw["otp"].setdefault("poll_interval_s", 2)
     raw["otp"].setdefault("otp_timeout_s", 85)
-    raw["otp"]["regex"] = os.getenv("OTP_REGEX", raw["otp"].get("regex", "\\b(\\d{6})\\b"))
+    raw["otp"]["regex"] = (os.getenv("OTP_REGEX") or raw["otp"].get("regex", "\\b(\\d{6})\\b")).strip()
 
     # Excel Ayarları
     raw.setdefault("excel", {})
-    raw["excel"]["path"] = os.getenv("EXCEL_PATH", raw["excel"].get("path", "data/basvuranlar.xlsx"))
+    raw["excel"]["path"] = (os.getenv("EXCEL_PATH") or raw["excel"].get("path", "data/basvuranlar.xlsx")).strip()
     raw["excel"].setdefault("sheet", "Applicants")
     raw["excel"].setdefault("sync_interval_s", 30)
 
-    # Telegram Ayarları
+    # Telegram Ayarları (Panelden kaydedilen ayarlar config.yaml'da tutulur; env boşsa ezilmez)
     raw.setdefault("telegram", {})
-    raw["telegram"]["token"] = os.getenv("TELEGRAM_TOKEN", raw["telegram"].get("token", "")).strip()
-    raw["telegram"]["chat_id"] = os.getenv("TELEGRAM_CHAT_ID", raw["telegram"].get("chat_id", "")).strip()
+    raw["telegram"]["token"] = (os.getenv("TELEGRAM_TOKEN") or raw["telegram"].get("token", "")).strip()
+    raw["telegram"]["chat_id"] = (os.getenv("TELEGRAM_CHAT_ID") or raw["telegram"].get("chat_id", "")).strip()
     raw["telegram"].setdefault("heartbeat_s", 600)
 
     # Rezervasyon Ayarları
     raw.setdefault("booking", {})
     env_autobook = os.getenv("AUTO_BOOK")
-    if env_autobook is not None:
+    if env_autobook is not None and env_autobook.strip():
         raw["booking"]["auto_book"] = env_autobook.strip().lower() in ("true", "1", "yes")
     else:
         raw["booking"].setdefault("auto_book", False)
+    raw["booking"].setdefault("preferred_hour", "morning")
     raw["booking"].setdefault("preferred_hour", "morning")
 
     # Dizin Yolları
