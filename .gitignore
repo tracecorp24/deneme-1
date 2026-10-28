@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+
+# Environment and Secrets
+.env
+.env.*
+*.local
+
+# Chrome User Profiles & Cache
+chrome_profile/
+data/chrome_profile/
+data/sessions/
+*.tmp
+*.tmp.xlsx
+
+# Databases & Runtime State
+*.db
+*.db-wal
+*.db-shm
+data/*.db
+data/*.db-wal
+data/*.db-shm
+
+# User Data & Uploads (Private applicant data)
+data/basvuranlar.xlsx
+data/lift_requests.json
+
+# Screenshots & Logs
+logs/
+data/logs/
+screenshots/
+data/screenshots/
+*.png
+*.jpg
+*.jpeg
+*.webp
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo

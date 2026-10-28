@@ -1,0 +1,79 @@
+portal:
+  base: "https://visa.vfsglobal.com/tur/en/bgr"
+  country_code: "tur"
+  mission_code: "bgr"
+  culture_code: "en-US"
+  login_path: "/login"
+  x_auth_token: ""
+
+api:
+  base: "https://lift-api.vfsglobal.com"
+  public_earliest: "/appointment/centerwithearliestslot"
+  check_slot: "/appointment/CheckIsSlotAvailable"
+  login: "/user/login"
+  validate_otp: "/user/validateotp"
+  book: "/appointment/bookappointment"
+
+centres:
+  - { code: "IST", name: "Istanbul" }
+  - { code: "ANK", name: "Ankara" }
+  - { code: "EDR", name: "Edirne" }
+  - { code: "BUR", name: "Bursa" }
+  - { code: "IZM", name: "Izmir" }
+
+categories:
+  - { code: "SCHENGEN", match: "Schengen" }
+  - { code: "LONGSTAY", match: "Long Stay" }
+
+polling:
+  public_interval_s: [300, 480]
+  login_verify_interval_s: [1200, 1800]
+  api_pause_s: [10, 20]
+  night_window: ["02:00", "05:00"]
+  night_multiplier: 2.0
+  delay_honor_margin_s: 3
+
+session:
+  idle_logout_s: 1200
+  keepalive_interval_s: 600
+  cf_clearance_ttl_s: 1500
+  login_budget: 3
+  login_cooldown_s: 1800
+
+http:
+  impersonate: "chrome"
+  timeout_s: 25
+  per_ip_concurrency: 3
+  max_retries: 3
+
+proxy:
+  isp_pool: []
+  health_cooldown_s: 900
+
+otp:
+  imap_port: 993
+  sender_filter: "vfsglobal"
+  subject_filter: ["OTP", "verification", "code", "One Time Password"]
+  search_window_s: 180
+  poll_interval_s: 2
+  otp_timeout_s: 85
+  regex: "\\b(\\d{6})\\b"
+
+excel:
+  path: "data/basvuranlar.xlsx"
+  sheet: "Applicants"
+  sync_interval_s: 30
+
+telegram:
+  token: ""
+  chat_id: ""
+  heartbeat_s: 600
+
+booking:
+  auto_book: false
+  preferred_hour: "morning"
+
+paths:
+  data_dir: "data"
+  session_dir: "data/sessions"
+  log_dir: "logs"

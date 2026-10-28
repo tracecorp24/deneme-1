@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VFS Global Bulgaristan Vize Botu — Yönetim ve Kontrol Paneli</title>
+    <!-- Modern Typography: Outfit, Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060911;
+            --bg-secondary: #0b111e;
+            --bg-card: rgba(15, 23, 42, 0.75);
+            --bg-card-hover: rgba(22, 32, 54, 0.85);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-focus: rgba(6, 182, 212, 0.4);
+            
+            --emerald: #10b981;
+            --emerald-glow: rgba(16, 185, 129, 0.3);
+            --cyan: #06b6d4;
+            --cyan-glow: rgba(6, 182, 212, 0.3);
+            --indigo: #6366f1;
+            --amber: #f59e0b;
+            --rose: #f43f5e;
+            --purple: #a855f7;
+            
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 12% 15%, rgba(99, 102, 241, 0.14) 0%, transparent 40%),
+                radial-gradient(circle at 88% 20%, rgba(6, 182, 212, 0.14) 0%, transparent 40%),
+                radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.10) 0%, transparent 50%);
+            background-attachment: fixed;
+            line-height: 1.5;
+            padding-bottom: 60px;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 24px 32px;
+        }
+
+        /* Top Header */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 18px 28px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-glass);
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-badge {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 22px;
+            color: #ffffff;
+            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4);
+        }
+
+        .brand-text h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-text p {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tag-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 10px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--cyan);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .live-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            padding: 8px 16px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--emerald);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--emerald);
+            box-shadow: 0 0 10px var(--emerald);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 16px var(--emerald); }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        /* KPI Metrics Bar */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            backdrop-filter: blur(16px);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .metric-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .metric-info h3 {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-dim);
+            margin-bottom: 2px;
+        }
+
+        .metric-info .val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .metric-info .sub {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Action Banner */
+        .action-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(99, 102, 241, 0.12));
+            border: 1px solid rgba(6, 182, 212, 0.35);
+            border-radius: var(--radius-lg);
+            padding: 22px 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(6, 182, 212, 0.15);
+        }
+
+        .banner-info h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 19px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .banner-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .banner-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            border: 1px solid transparent;
+            outline: none;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(0.5);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            color: #ffffff;
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover:not(:disabled) {
+            background: linear-gradient(135deg, #34d399, #10b981);
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--rose);
+            border-color: rgba(244, 63, 94, 0.35);
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: var(--rose);
+            color: #ffffff;
+        }
+
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border-color: var(--border-subtle);
+        }
+
+        .btn-outline:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: var(--shadow-glass);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 17px;
+            font-weight: 700;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Dashboard Two Column Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* Pipeline Steps */
+        .pipeline-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .pipeline-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .pipeline-item.running {
+            background: rgba(6, 182, 212, 0.08);
+            border-color: rgba(6, 182, 212, 0.4);
+            box-shadow: 0 0 16px rgba(6, 182, 212, 0.15);
+        }
+
+        .pipeline-item.completed {
+            background: rgba(16, 185, 129, 0.06);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .pipeline-item.failed {
+            background: rgba(244, 63, 94, 0.08);
+            border-color: rgba(244, 63, 94, 0.4);
+        }
+
+        .step-number {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            background: #1e293b;
+            color: var(--text-muted);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .pipeline-item.running .step-number {
+            background: var(--cyan);
+            color: #041019;
+            border-color: #ffffff;
+            box-shadow: 0 0 14px var(--cyan);
+        }
+
+        .pipeline-item.completed .step-number {
+            background: var(--emerald);
+            color: #ffffff;
+            border-color: var(--emerald);
+            box-shadow: 0 0 12px var(--emerald-glow);
+        }
+
+        .step-content {
+            flex-grow: 1;
+        }
+
+        .step-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2px;
+        }
+
+        .step-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .step-badge {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-dim);
+        }
+
+        .pipeline-item.running .step-badge {
+            background: rgba(6, 182, 212, 0.2);
+            color: var(--cyan);
+        }
+
+        .pipeline-item.completed .step-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--emerald);
+        }
+
+        .step-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .step-details {
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--cyan);
+            margin-top: 2px;
+        }
+
+        /* Upload Dropzone */
+        .upload-zone {
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: rgba(0, 0, 0, 0.2);
+            margin-bottom: 16px;
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--cyan);
+            background: rgba(6, 182, 212, 0.05);
+        }
+
+        .upload-zone .icon {
+            font-size: 26px;
+            margin-bottom: 4px;
+        }
+
+        .upload-zone p {
+            font-size: 13px;
+            color: var(--text-main);
+        }
+
+        .upload-zone span {
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        /* Tables */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            max-height: 280px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(30, 41, 59, 0.85);
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 10px 14px;
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 12px;
+        }
+
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge-durum {
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .badge-durum.PENDING { background: rgba(245, 158, 11, 0.15); color: var(--amber); }
+        .badge-durum.SLOT_FOUND { background: rgba(6, 182, 212, 0.2); color: var(--cyan); border: 1px solid rgba(6, 182, 212, 0.4); }
+        .badge-durum.BOOKED { background: rgba(16, 185, 129, 0.2); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.4); }
+        .badge-durum.COOLDOWN { background: rgba(244, 63, 94, 0.15); color: var(--rose); }
+
+        /* Terminal Console */
+        .terminal-card {
+            background: #040711;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-glass);
+        }
+
+        .terminal-header {
+            background: #0d1222;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .mac-dots {
+            display: flex;
+            gap: 7px;
+        }
+
+        .mac-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .mac-dot.red { background: #ff5f56; }
+        .mac-dot.yellow { background: #ffbd2e; }
+        .mac-dot.green { background: #27c93f; }
+
+        .terminal-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .terminal-body {
+            height: 280px;
+            overflow-y: auto;
+            padding: 14px 18px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.7;
+            background: #040711;
+        }
+
+        .log-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 3px;
+        }
+
+        .log-time {
+            color: var(--text-dim);
+            flex-shrink: 0;
+            font-size: 11px;
+        }
+
+        .log-badge {
+            font-weight: 700;
+            padding: 0 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            flex-shrink: 0;
+            height: 20px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .log-badge.INFO { background: rgba(6, 182, 212, 0.15); color: var(--cyan); }
+        .log-badge.SUCCESS { background: rgba(16, 185, 129, 0.15); color: var(--emerald); }
+        .log-badge.WARNING, .log-badge.WARN { background: rgba(245, 158, 11, 0.15); color: var(--amber); }
+        .log-badge.ERROR { background: rgba(244, 63, 94, 0.15); color: var(--rose); }
+        .log-badge.SLOT { background: rgba(168, 85, 247, 0.2); color: var(--purple); border: 1px solid rgba(168, 85, 247, 0.4); }
+
+        .log-msg {
+            color: #cbd5e1;
+            word-break: break-all;
+        }
+
+        /* Screenshot */
+        .screenshot-container {
+            margin-top: 12px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+            background: #000000;
+            text-align: center;
+            max-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .screenshot-container img {
+            max-width: 100%;
+            max-height: 280px;
+            object-fit: contain;
+            display: block;
+            cursor: pointer;
+        }
+
+        .screenshot-placeholder {
+            padding: 40px;
+            color: var(--text-dim);
+            font-size: 13px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-box {
+            width: 640px;
+            max-width: 92%;
+            background: #0b1120;
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-glass);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 13px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--cyan);
+        }
+
+        /* Switch */
+        .switch-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .switch-toggle {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch-toggle input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #334155;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: var(--emerald); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        @media (max-width: 1024px) {
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 640px) {
+            .metrics-grid { grid-template-columns: 1fr; }
+            .action-banner { flex-direction: column; gap: 16px; text-align: center; }
+            .banner-buttons { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Top Header -->
+    <header>
+        <div class="header-brand">
+            <div class="brand-badge">VB</div>
+            <div class="brand-text">
+                <h1>VFS Global Bulgaristan Vize Botu</h1>
+                <p>
+                    <span>Hedef: Türkiye &rarr; Bulgaristan</span>
+                    <span class="tag-pill">İki Katmanlı Hibrit Mimari (Plan v2)</span>
+                </p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <div class="live-status" id="system-status-pill">
+                <span class="pulse-dot" id="system-pulse-dot"></span>
+                <span id="system-status-text">Sistem Hazır</span>
+            </div>
+            <a href="/api/template" class="btn btn-outline" id="btn-download-tpl">
+                📥 Şablon Excel İndir
+            </a>
+            <button class="btn btn-outline" onclick="syncExcelNow()">
+                🔄 Excel & DB Eşitle
+            </button>
+        </div>
+    </header>
+
+    <!-- Key Metrics Cards -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-icon" style="background: rgba(99, 102, 241, 0.15); color: var(--indigo);">👥</div>
+            <div class="metric-info">
+                <h3>Aktif Başvuran</h3>
+                <div class="val" id="metric-applicants">0</div>
+                <div class="sub" id="metric-applicants-sub">Bekleyen başvuranlar</div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--emerald);">🎯</div>
+            <div class="metric-info">
+                <h3>Tespit Edilen Slot</h3>
+                <div class="val" id="metric-slots">0</div>
+                <div class="sub">Açık randevu tarihi</div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-icon" style="background: rgba(6, 182, 212, 0.15); color: var(--cyan);">⚡</div>
+            <div class="metric-info">
+                <h3>Alınan Randevu</h3>
+                <div class="val" id="metric-booked">0</div>
+                <div class="sub">Başarıyla rezerve</div>
+            </div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-icon" style="background: rgba(245, 158, 11, 0.15); color: var(--amber);">⏱️</div>
+            <div class="metric-info">
+                <h3>Son Genel Tarama</h3>
+                <div class="val" id="metric-sweep" style="font-size: 15px; margin-top: 4px;">-</div>
+                <div class="sub" id="metric-sweep-sub">Katman 0 Public Sweep</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Banner -->
+    <div class="action-banner">
+        <div class="banner-info">
+            <h2>VFS Global Randevu Orkestrasyonu</h2>
+            <p><strong>Katman 0:</strong> Login olmadan, sıfır hesap riskiyle 5-8 dk aralıkla genel slot yoklaması. | <strong>Katman 1:</strong> Slot açıldığı an IMAP OTP ve milisaniyelik rezervasyon.</p>
+        </div>
+        <div class="banner-buttons">
+            <button class="btn btn-primary" id="btn-sweep" onclick="triggerSweep()" title="Tek çağrıda tüm merkezleri tarar (Login gerektirmez, ban riski yoktur)">
+                ⚡ Katman 0: Hızlı Slot Tara
+            </button>
+            <button class="btn btn-success" id="btn-live-bot" onclick="toggleLiveBot()">
+                🚀 7/24 Canlı Botu Başlat
+            </button>
+            <button class="btn btn-outline" id="btn-test-phase1" onclick="startWorkflow()">
+                ▶ Aşama 1: Tarayıcı Testi
+            </button>
+            <button class="btn btn-outline" id="btn-settings" onclick="openSettingsModal()">
+                ⚙️ Ayarlar & Testler
+            </button>
+            <button class="btn btn-danger" id="btn-stop-all" onclick="stopAll()" disabled>
+                ⏹ Durdur
+            </button>
+        </div>
+    </div>
+
+    <!-- Live Slots Detection Card -->
+    <div class="glass-card" style="border-color: rgba(16, 185, 129, 0.35);">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="icon">🎯</span>
+                Açılan Randevu Slotları (Canlı Slot Akışı)
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <span class="tag-pill" id="slots-count-pill" style="background: rgba(16, 185, 129, 0.15); color: var(--emerald); border-color: rgba(16, 185, 129, 0.3);">0 Slot Tespit Edildi</span>
+                <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="loadSlots()">Yenile</button>
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Merkez Adı</th>
+                        <th>Vize Kategorisi</th>
+                        <th>Açık Randevu Tarihi</th>
+                        <th>İlk Tespit Zamanı</th>
+                        <th>Durum & Eylem</th>
+                    </tr>
+                </thead>
+                <tbody id="slots-tbody">
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">
+                            Henüz açık slot kaydı yok. 'Hızlı Slot Tara' butonuna basarak kontrol edebilirsiniz.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="dashboard-grid">
+        <!-- Left: Step-by-Step Live Pipeline -->
+        <div class="glass-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span class="icon">⚡</span>
+                    Aşama 1: İnsansı Tarayıcı & Turnstile Akışı
+                </div>
+                <span class="tag-pill" id="step-counter-pill">0 / 5 Tamamlandı</span>
+            </div>
+
+            <div class="pipeline-list" id="pipeline-container">
+                <!-- Dynamically rendered via JS -->
+            </div>
+        </div>
+
+        <!-- Right: Excel Upload & Applicants -->
+        <div class="glass-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span class="icon">📊</span>
+                    Başvuran Yönetimi (Excel & SQLite)
+                </div>
+                <span class="tag-pill" id="applicant-count-pill">0 Başvuran</span>
+            </div>
+
+            <!-- Upload Dropzone -->
+            <div class="upload-zone" id="drop-zone" onclick="document.getElementById('excel-file-input').click()">
+                <div class="icon">📄</div>
+                <p><strong>Excel Dosyasını Buraya Sürükleyin</strong> veya tıklayarak seçin</p>
+                <span>(.xlsx formatı, 23 sütunlu plan.md / plan2.md şeması)</span>
+                <input type="file" id="excel-file-input" accept=".xlsx, .xls" style="display: none;" onchange="handleFileUpload(event)">
+            </div>
+
+            <!-- Applicants Table Preview -->
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ad Soyad</th>
+                            <th>Pasaport</th>
+                            <th>VFS E-posta</th>
+                            <th>Merkez</th>
+                            <th>Durum</th>
+                            <th>İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applicants-tbody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; color: var(--text-dim);">Henüz Excel yüklenmedi. Şablon verileri gösteriliyor...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Row: Terminal Logs & Live Visual Preview -->
+    <div class="dashboard-grid">
+        <!-- Terminal Logs -->
+        <div class="terminal-card">
+            <div class="terminal-header">
+                <div class="mac-dots">
+                    <div class="mac-dot red"></div>
+                    <div class="mac-dot yellow"></div>
+                    <div class="mac-dot green"></div>
+                </div>
+                <div class="terminal-title">Canlı Bot Konsolu & Telemetri</div>
+                <div>
+                    <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="clearLogs()">Temizle</button>
+                </div>
+            </div>
+            <div class="terminal-body" id="terminal-body">
+                <div class="log-row">
+                    <span class="log-time">--:--:--</span>
+                    <span class="log-badge INFO">INFO</span>
+                    <span class="log-msg">Sistem hazır. 7/24 Canlı Bot veya Aşama 1 Tarayıcı Testini başlatabilirsiniz.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screenshot Preview -->
+        <div class="glass-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span class="icon">📸</span>
+                    Canlı Ekran & Doğrulama Kanıtı
+                </div>
+                <span class="tag-pill" id="screenshot-timestamp">Henüz ekran görüntüsü yok</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
+                Botun Cloudflare Turnstile'ı geçtiğini ve formun aktifleştiğini canlı ekran görüntüsünden görebilirsiniz:
+            </p>
+            <div class="screenshot-container" id="screenshot-box">
+                <div class="screenshot-placeholder" id="screenshot-placeholder">
+                    Test başladığında son ekran görüntüsü buraya yansıyacaktır.
+                </div>
+                <img id="live-screenshot-img" src="" alt="Canlı Ekran" style="display: none;" onclick="window.open(this.src, '_blank')">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Settings & Test Tools Modal -->
+<div id="settings-modal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="card-header">
+            <div class="card-title">
+                <span class="icon">⚙️</span>
+                Sistem, Bildirim & Entegrasyon Ayarları
+            </div>
+            <button onclick="closeSettingsModal()" style="background: transparent; border: none; color: var(--text-dim); font-size: 22px; cursor: pointer;">&times;</button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+            <!-- Auto Book Switch -->
+            <div class="switch-container">
+                <label class="switch-toggle">
+                    <input type="checkbox" id="cfg-auto-book">
+                    <span class="slider"></span>
+                </label>
+                <div>
+                    <strong style="color: #fff; font-size: 13px; display: block;">Otomatik Rezervasyon (Auto-Book)</strong>
+                    <span style="font-size: 11px; color: var(--text-muted);">Slot tespit edildiğinde anında Katman 1 rezervasyon isteğini gönderir.</span>
+                </div>
+            </div>
+
+            <!-- Telegram Settings -->
+            <div class="form-group">
+                <label>
+                    <span>Telegram Bot Token</span>
+                    <button class="btn btn-outline" style="padding: 2px 8px; font-size: 11px;" onclick="testTelegram()">💬 Telegram'ı Test Et</button>
+                </label>
+                <input type="text" id="cfg-tg-token" class="form-input" placeholder="Örn: 123456789:ABCdefGhIJKlmNoP...">
+            </div>
+
+            <div class="form-group">
+                <label>Telegram Chat ID</label>
+                <input type="text" id="cfg-tg-chat" class="form-input" placeholder="Örn: 987654321">
+            </div>
+
+            <!-- IMAP Settings -->
+            <div class="form-group">
+                <label>
+                    <span>IMAP E-Posta / OTP Doğrulama Testi</span>
+                    <button class="btn btn-outline" style="padding: 2px 8px; font-size: 11px;" onclick="testImap()">📬 IMAP'i Test Et</button>
+                </label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <input type="text" id="test-imap-email" class="form-input" placeholder="Test Gmail adresi">
+                    <input type="password" id="test-imap-pass" class="form-input" placeholder="16 haneli Uygulama Şifresi">
+                </div>
+            </div>
+
+            <!-- Proxy Pool -->
+            <div class="form-group">
+                <label>Residential / ISP Proxy Havuzu (Her satıra bir proxy)</label>
+                <textarea id="cfg-proxies" class="form-input" rows="3" placeholder="http://kullanici:sifre@ip:port&#10;http://kullanici:sifre@ip2:port" style="font-family: monospace; font-size: 12px;"></textarea>
+                <span style="font-size: 11px; color: var(--text-dim); margin-top: 4px; display: block;">VFS datacenter IP'leri engeller. Sticky residential / ISP proxy kullanınız.</span>
+            </div>
+
+            <!-- Test Feedback Alert -->
+            <div id="modal-feedback" style="display: none; padding: 10px 14px; border-radius: 8px; font-size: 12px;"></div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px;">
+                <button class="btn btn-outline" onclick="closeSettingsModal()">İptal</button>
+                <button class="btn btn-success" onclick="saveSettings()">💾 Ayarları Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let pollInterval = null;
+    let autoScrollLogs = true;
+    let isLiveBotRunning = false;
+    let isPhase1Running = false;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        loadApplicants();
+        loadSlots();
+        pollStatus();
+        pollInterval = setInterval(pollStatus, 2000);
+        setupDragAndDrop();
+    });
+
+    // Ana Canlı Durum Sorgulama
+    async function pollStatus() {
+        try {
+            const resp = await fetch("/api/status");
+            if (!resp.ok) return;
+            const data = await resp.json();
+
+            const p1 = data.phase1 || {};
+            const live = data.live_bot || {};
+            const events = data.events || [];
+
+            isPhase1Running = !!p1.is_running;
+            isLiveBotRunning = !!live.is_running;
+
+            // Buton durumları
+            const btnLive = document.getElementById("btn-live-bot");
+            const btnP1 = document.getElementById("btn-test-phase1");
+            const btnStop = document.getElementById("btn-stop-all");
+            const statusText = document.getElementById("system-status-text");
+            const statusPill = document.getElementById("system-status-pill");
+            const pulseDot = document.getElementById("system-pulse-dot");
+
+            if (isLiveBotRunning) {
+                btnLive.innerText = "⏹ Canlı Botu Durdur";
+                btnLive.className = "btn btn-danger";
+                btnP1.disabled = true;
+                btnStop.disabled = false;
+                statusText.innerText = "Canlı Bot Çalışıyor (Katman 0 + 1)";
+                statusPill.style.borderColor = "rgba(16, 185, 129, 0.4)";
+                statusPill.style.color = "var(--emerald)";
+                pulseDot.style.backgroundColor = "var(--emerald)";
+            } else if (isPhase1Running) {
+                btnLive.disabled = true;
+                btnP1.disabled = true;
+                btnStop.disabled = false;
+                statusText.innerText = "Aşama 1 Testi Yürütülüyor...";
+                statusPill.style.borderColor = "rgba(6, 182, 212, 0.4)";
+                statusPill.style.color = "var(--cyan)";
+                pulseDot.style.backgroundColor = "var(--cyan)";
+            } else {
+                btnLive.innerText = "🚀 7/24 Canlı Botu Başlat";
+                btnLive.className = "btn btn-success";
+                btnLive.disabled = false;
+                btnP1.disabled = false;
+                btnStop.disabled = true;
+                statusText.innerText = "Sistem Hazır";
+                statusPill.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                statusPill.style.color = "var(--text-muted)";
+                pulseDot.style.backgroundColor = "#94a3b8";
+            }
+
+            // Metrikler
+            const counts = live.counts || {};
+            document.getElementById("metric-applicants").innerText = counts.pending ?? 0;
+            document.getElementById("metric-applicants-sub").innerText = `Toplam: ${counts.total_applicants ?? 0} Başvuran`;
+            document.getElementById("metric-slots").innerText = counts.slots_seen ?? 0;
+            document.getElementById("metric-booked").innerText = counts.booked ?? 0;
+
+            const meta = live.meta || {};
+            if (meta.son_sweep && meta.son_sweep !== "Henüz yapılmadı") {
+                document.getElementById("metric-sweep").innerText = meta.son_sweep.split(" ")[1] || meta.son_sweep;
+            } else {
+                document.getElementById("metric-sweep").innerText = "Beklemede";
+            }
+
+            // Pipeline adımları
+            renderPipeline(p1.steps);
+
+            // Logları birleştir ve çiz (Phase 1 logs + SQLite events)
+            const combinedLogs = [];
+            if (p1.logs) {
+                p1.logs.forEach(l => combinedLogs.push({ time: l.time, level: l.level, msg: l.msg }));
+            }
+            if (events) {
+                events.forEach(e => {
+                    const timeOnly = (e.ts || "").split(" ")[1] || e.ts || "";
+                    combinedLogs.push({ time: timeOnly, level: e.level, msg: e.msg });
+                });
+            }
+            renderLogs(combinedLogs);
+
+            // Ekran görüntüsü
+            if (p1.latest_screenshot) {
+                const img = document.getElementById("live-screenshot-img");
+                const ph = document.getElementById("screenshot-placeholder");
+                const newSrc = `/api/screenshot/${p1.latest_screenshot}?t=${new Date().getTime()}`;
+                if (img.src !== newSrc) {
+                    img.src = newSrc;
+                    img.style.display = "block";
+                    ph.style.display = "none";
+                    document.getElementById("screenshot-timestamp").innerText = p1.latest_screenshot;
+                }
+            }
+        } catch (e) {
+            console.error("pollStatus error:", e);
+        }
+    }
+
+    // Pipeline Adımları
+    function renderPipeline(steps) {
+        const container = document.getElementById("pipeline-container");
+        if (!steps || steps.length === 0) return;
+
+        let completedCount = 0;
+        let html = "";
+
+        steps.forEach(s => {
+            if (s.status === "completed") completedCount++;
+            let statusLabel = s.status === "running" ? "Çalışıyor" : (s.status === "completed" ? "Tamamlandı" : (s.status === "failed" ? "Başarısız" : "Bekliyor"));
+            let iconContent = s.status === "running" ? "⏳" : (s.status === "completed" ? "✓" : (s.status === "failed" ? "✕" : s.id));
+
+            html += `
+            <div class="pipeline-item ${s.status}">
+                <div class="step-number">${iconContent}</div>
+                <div class="step-content">
+                    <div class="step-header-row">
+                        <div class="step-title">${s.title}</div>
+                        <div class="step-badge">${statusLabel}</div>
+                    </div>
+                    <div class="step-desc">${s.desc}</div>
+                    <div class="step-details">${s.details || ""}</div>
+                </div>
+            </div>`;
+        });
+
+        container.innerHTML = html;
+        document.getElementById("step-counter-pill").innerText = `${completedCount} / ${steps.length} Tamamlandı`;
+    }
+
+    // Konsol Logları
+    function renderLogs(logs) {
+        if (!logs || logs.length === 0) return;
+        const body = document.getElementById("terminal-body");
+        
+        let html = "";
+        logs.forEach(l => {
+            html += `
+            <div class="log-row">
+                <span class="log-time">${l.time}</span>
+                <span class="log-badge ${l.level}">${l.level}</span>
+                <span class="log-msg">${escapeHtml(l.msg)}</span>
+            </div>`;
+        });
+
+        body.innerHTML = html;
+        if (autoScrollLogs) {
+            body.scrollTop = body.scrollHeight;
+        }
+    }
+
+    function clearLogs() {
+        document.getElementById("terminal-body").innerHTML = "";
+    }
+
+    // 7/24 Canlı Bot Başlat/Durdur
+    async function toggleLiveBot() {
+        if (isLiveBotRunning) {
+            await fetch("/api/stop-bot", { method: "POST" });
+        } else {
+            await fetch("/api/start-bot", { method: "POST" });
+        }
+        pollStatus();
+    }
+
+    // Aşama 1 Tarayıcı Testini Başlat
+    async function startWorkflow() {
+        const resp = await fetch("/api/start", { method: "POST" });
+        const res = await resp.json();
+        if (!res.success) alert(res.message);
+        pollStatus();
+    }
+
+    // Tümünü Durdur
+    async function stopAll() {
+        if (isLiveBotRunning) await fetch("/api/stop-bot", { method: "POST" });
+        if (isPhase1Running) await fetch("/api/stop", { method: "POST" });
+        pollStatus();
+    }
+
+    // Başvuranları Yükle
+    async function loadApplicants() {
+        try {
+            const resp = await fetch("/api/applicants");
+            const data = await resp.json();
+            const tbody = document.getElementById("applicants-tbody");
+            document.getElementById("applicant-count-pill").innerText = `${data.count} Başvuran`;
+
+            if (!data.applicants || data.applicants.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-dim);">Başvuran kaydı bulunamadı.</td></tr>`;
+                return;
+            }
+
+            let rowsHtml = "";
+            data.applicants.forEach(app => {
+                const durum = app.durum || 'PENDING';
+                const ref = app.referans_no ? `<br><small style="color: var(--emerald); font-family: monospace;">${app.referans_no}</small>` : '';
+                rowsHtml += `
+                <tr>
+                    <td><strong>#${app.id || '-'}</strong></td>
+                    <td><strong>${app.ad || ''} ${app.soyad || ''}</strong></td>
+                    <td><span style="font-family: monospace; color: var(--text-dim);">${app.pasaport_no || '-'}</span></td>
+                    <td><small style="color: var(--text-muted);">${app.vfs_email || '-'}</small></td>
+                    <td><span class="tag-pill" style="font-size: 10px;">${app.merkez_tercih || 'IST'}</span></td>
+                    <td><span class="badge-durum ${durum}">${durum}</span>${ref}</td>
+                    <td>
+                        <button class="btn btn-outline" style="padding: 2px 8px; font-size: 11px;" onclick="manualBook(${app.id})">⚡ Rezerve Et</button>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = rowsHtml;
+        } catch (e) {
+            console.error("loadApplicants error:", e);
+        }
+    }
+
+    // Slotları Yükle
+    async function loadSlots() {
+        try {
+            const resp = await fetch("/api/slots");
+            const data = await resp.json();
+            const tbody = document.getElementById("slots-tbody");
+            document.getElementById("slots-count-pill").innerText = `${data.count} Slot Tespit Edildi`;
+
+            if (!data.slots || data.slots.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-dim); padding: 20px;">Henüz açık slot kaydı yok. 'Hızlı Slot Tara' butonuna basarak kontrol edebilirsiniz.</td></tr>`;
+                return;
+            }
+
+            let html = "";
+            data.slots.forEach(s => {
+                html += `
+                <tr>
+                    <td><strong>📍 ${escapeHtml(s.merkez || '')}</strong></td>
+                    <td><span class="tag-pill" style="font-size: 11px;">${escapeHtml(s.kategori || '')}</span></td>
+                    <td><strong style="color: var(--emerald); font-size: 14px;">📅 ${escapeHtml(s.tarih || '')}</strong></td>
+                    <td style="color: var(--text-muted); font-size: 12px;">${escapeHtml(s.ilk_gorulme || '')}</td>
+                    <td>
+                        <button class="btn btn-primary" style="padding: 3px 10px; font-size: 11px;" onclick="bookSlotForAny('${escapeHtml(s.tarih || '')}')">⚡ Hemen Rezerve Et</button>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        } catch (e) {
+            console.error("loadSlots error:", e);
+        }
+    }
+
+    // Katman 0: Anlık Slot Taraması
+    async function triggerSweep() {
+        const btn = document.getElementById("btn-sweep");
+        btn.disabled = true;
+        btn.innerText = "⏳ Taranıyor...";
+        try {
+            const resp = await fetch("/api/sweep-now", { method: "POST" });
+            const data = await resp.json();
+            alert(data.message);
+            loadSlots();
+        } catch (e) {
+            alert("İstek hatası: " + e);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "⚡ Katman 0: Hızlı Slot Tara";
+            pollStatus();
+        }
+    }
+
+    // Manuel Rezervasyon Tetikleme
+    async function manualBook(applicantId) {
+        const tarih = prompt(`Başvuran #${applicantId} için rezerve edilecek tarihi girin (Örn: 2026-11-15):`);
+        if (!tarih) return;
+
+        try {
+            const resp = await fetch("/api/book-now", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ applicant_id: applicantId, slot_date: tarih })
+            });
+            const data = await resp.json();
+            alert(data.message);
+            loadApplicants();
+        } catch (e) {
+            alert("Rezervasyon isteği gönderilemedi: " + e);
+        }
+    }
+
+    async function bookSlotForAny(slotDate) {
+        const applicantId = prompt(`Açılan slot tarihi: ${slotDate}\nBu slotu hangi başvuran için rezerve etmek istiyorsunuz? (Başvuran ID'si giriniz):`);
+        if (!applicantId) return;
+
+        try {
+            const resp = await fetch("/api/book-now", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ applicant_id: parseInt(applicantId), slot_date: slotDate })
+            });
+            const data = await resp.json();
+            alert(data.message);
+            loadApplicants();
+        } catch (e) {
+            alert("Hata: " + e);
+        }
+    }
+
+    // Excel & SQLite Eşitle
+    async function syncExcelNow() {
+        try {
+            const resp = await fetch("/api/sync-excel", { method: "POST" });
+            const data = await resp.json();
+            alert(data.message);
+            loadApplicants();
+        } catch (e) {
+            alert("Eşitleme hatası: " + e);
+        }
+    }
+
+    // Excel Dosya Yükleme
+    async function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const resp = await fetch("/api/upload-excel", { method: "POST", body: formData });
+            const res = await resp.json();
+            alert(res.message);
+            loadApplicants();
+        } catch (e) {
+            alert("Dosya yüklenemedi: " + e);
+        }
+    }
+
+    // Ayarlar Modalı
+    async function openSettingsModal() {
+        try {
+            const resp = await fetch("/api/settings");
+            const data = await resp.json();
+            document.getElementById("cfg-tg-token").value = data.telegram_token || "";
+            document.getElementById("cfg-tg-chat").value = data.telegram_chat_id || "";
+            document.getElementById("cfg-proxies").value = (data.proxies || []).join("\n");
+            document.getElementById("cfg-auto-book").checked = !!data.auto_book;
+            document.getElementById("modal-feedback").style.display = "none";
+            document.getElementById("settings-modal").style.display = "flex";
+        } catch (e) {
+            alert("Ayarlar yüklenemedi: " + e);
+        }
+    }
+
+    function closeSettingsModal() {
+        document.getElementById("settings-modal").style.display = "none";
+    }
+
+    async function saveSettings() {
+        const token = document.getElementById("cfg-tg-token").value;
+        const chat = document.getElementById("cfg-tg-chat").value;
+        const proxies = document.getElementById("cfg-proxies").value;
+        const autoBook = document.getElementById("cfg-auto-book").checked;
+
+        try {
+            const resp = await fetch("/api/settings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    telegram_token: token,
+                    telegram_chat_id: chat,
+                    proxy_list: proxies,
+                    auto_book: autoBook
+                })
+            });
+            const res = await resp.json();
+            alert(res.message);
+            closeSettingsModal();
+        } catch (e) {
+            alert("Kaydetme hatası: " + e);
+        }
+    }
+
+    async function testTelegram() {
+        const token = document.getElementById("cfg-tg-token").value;
+        const chat = document.getElementById("cfg-tg-chat").value;
+        showModalFeedback("Telegram test mesajı gönderiliyor...", "info");
+
+        try {
+            const resp = await fetch("/api/test-telegram", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token: token, chat_id: chat })
+            });
+            const res = await resp.json();
+            showModalFeedback(res.message, res.success ? "success" : "error");
+        } catch (e) {
+            showModalFeedback("Test isteği başarısız: " + e, "error");
+        }
+    }
+
+    async function testImap() {
+        const email = document.getElementById("test-imap-email").value;
+        const pass = document.getElementById("test-imap-pass").value;
+        showModalFeedback("IMAP sunucusuna bağlanılıyor...", "info");
+
+        try {
+            const resp = await fetch("/api/test-imap", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user: email, password: pass })
+            });
+            const res = await resp.json();
+            showModalFeedback(res.message, res.success ? "success" : "error");
+        } catch (e) {
+            showModalFeedback("IMAP test hatası: " + e, "error");
+        }
+    }
+
+    function showModalFeedback(msg, type) {
+        const fb = document.getElementById("modal-feedback");
+        fb.style.display = "block";
+        fb.innerText = msg;
+        if (type === "success") {
+            fb.style.background = "rgba(16, 185, 129, 0.2)";
+            fb.style.color = "var(--emerald)";
+            fb.style.border = "1px solid rgba(16, 185, 129, 0.4)";
+        } else if (type === "error") {
+            fb.style.background = "rgba(244, 63, 94, 0.2)";
+            fb.style.color = "var(--rose)";
+            fb.style.border = "1px solid rgba(244, 63, 94, 0.4)";
+        } else {
+            fb.style.background = "rgba(6, 182, 212, 0.2)";
+            fb.style.color = "var(--cyan)";
+            fb.style.border = "1px solid rgba(6, 182, 212, 0.4)";
+        }
+    }
+
+    // Sürükle Bırak
+    function setupDragAndDrop() {
+        const dropZone = document.getElementById("drop-zone");
+        if (!dropZone) return;
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); }, false);
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            if (dt.files && dt.files.length > 0) {
+                const input = document.getElementById('excel-file-input');
+                input.files = dt.files;
+                handleFileUpload({ target: input });
+            }
+        });
+    }
+
+    function escapeHtml(text) {
+        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+        return text ? String(text).replace(/[&<>"']/g, m => map[m]) : "";
+    }
+</script>
+
+</body>
+</html>
