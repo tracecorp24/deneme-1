@@ -70,6 +70,7 @@ class Notify:
         if not self.token:
             return
         offset = 0
+        first_run = True
         DB.log("INFO", "Telegram getUpdates polling dinleyicisi başlatıldı")
         while True:
             try:
@@ -79,13 +80,21 @@ class Notify:
                     resp = await s.get(url, params=params)
                     if resp.status_code == 200:
                         data = resp.json()
-                        for update in data.get("result", []):
+                        updates = data.get("result", [])
+                        if first_run:
+                            if updates:
+                                offset = max(u["update_id"] for u in updates) + 1
+                                DB.log("INFO", f"Telegram getUpdates: {len(updates)} adet eski kuyruk güncellemesi atlandı.")
+                            first_run = False
+                            continue
+
+                        for update in updates:
                             offset = max(offset, update["update_id"] + 1)
                             cb = update.get("callback_query")
                             if cb:
                                 await self._handle_callback_query(cb, s)
                     elif resp.status_code == 409:
-                        # Webhook aktif olduğu için getUpdates 409 döner; webhook varsa polling uyur
+                        DB.log("INFO", "Telegram getUpdates 409 Conflict: Aktif webhook kurulu, polling 30s beklemede.")
                         await asyncio.sleep(30)
                     else:
                         await asyncio.sleep(5)
@@ -110,7 +119,7 @@ class Notify:
                 ap_row = DB.q("SELECT randevu_tarihi FROM applicants WHERE id=?", (applicant_id,))
                 target_date = ap_row[0]["randevu_tarihi"] if ap_row and ap_row[0]["randevu_tarihi"] else ""
                 from bot.service import bot_service
-                res = bot_service.book_applicant(applicant_id, target_date)
+                res = await bot_service.book_applicant_async(applicant_id, target_date)
                 msg = res.get("message", "")
                 await self.send(f"⚡ <b>Rezervasyon Tetiklendi (#{applicant_id}):</b> {msg}")
                 DB.log("INFO", f"Telegram getUpdates book:{applicant_id} sonucu: {msg}", applicant_id)

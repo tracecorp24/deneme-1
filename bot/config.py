@@ -117,7 +117,6 @@ def load_config() -> Cfg:
     else:
         raw["booking"].setdefault("auto_book", False)
     raw["booking"].setdefault("preferred_hour", "morning")
-    raw["booking"].setdefault("preferred_hour", "morning")
 
     # Dizin Yolları
     raw.setdefault("paths", {})
