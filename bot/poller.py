@@ -121,10 +121,17 @@ class PublicPoller:
 
     async def sweep_once(self) -> int:
         data = await self.vfs.public_earliest()
+        if data is None:
+            n = int(DB.meta_get("rl_streak", "0") or 0) + 1
+            DB.meta_set("rl_streak", str(n))
+            if n == 3:
+                await self.notify.send("⚠️ VFS 3 kez üst üste hız sınırı verdi — proxy şart.")
+            return 0
+        DB.meta_set("rl_streak", "0")
+
         rows = self.vfs.parse_public(data)
-        if data:
-            DB.meta_set("son_sweep", DB.now())
-            DB.meta_set("public_last_updated", str(data.get("lastUpdatedOn", "")))
+        DB.meta_set("son_sweep", DB.now())
+        DB.meta_set("public_last_updated", str(data.get("lastUpdatedOn", "")))
         hits = 0
 
         bekleyen = DB.applicants(durum=("PENDING", "SESSION_ACTIVE", "POLLING_SLOTS", "SLOT_FOUND"))

@@ -9,6 +9,7 @@ E5: 429202 / 24 saat hesap kilidi özel işleme
 E6: vacCode / visaCategoryCode kesin doğrulama
 """
 from __future__ import annotations
+import asyncio
 import base64
 import json
 import time
@@ -94,10 +95,12 @@ class LoginWorker:
                 DB.log("WARN", f"24 saat hesap kilidi tespit edildi: {account_id}", ap["id"])
                 return False
 
-            # 2. IP Hız Sınırı (429 / 429202: IP seviyesi sınır, hesabı kitleme!)
+            # 2. IP Hız Sınırı (429 / 429202: IP seviyesi sınır, bütçe yakılmaz!)
             if "429202" in res_str or (isinstance(res_start, dict) and str(res_start.get("code")) == "429202"):
-                DB.log("WARN", f"Login IP hız sınırı (429202): Hesap kilitlenmedi, bekleniyor: {account_id}", ap["id"])
-                await asyncio.sleep(min(60 * (deneme + 1), 300))
+                DB.log("WARN", f"Login IP hız sınırı (429202), bütçe yakılmadı: {account_id}", ap["id"])
+                await asyncio.sleep(min(90 * (deneme + 1), 300))
+                if deneme == int(CFG["session"]["login_budget"]) - 1:
+                    return False  # Bütçe cooldown'ı yazmadan çık
                 continue
 
             # E4: login_start hata kodu dönerse OTP bekleme, sonraki denemeye geç

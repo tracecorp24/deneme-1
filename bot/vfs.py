@@ -46,6 +46,9 @@ class VfsClient:
         )
         if not r:
             return None
+        if r.status_code != 200:
+            DB.log("WARN", f"public_earliest HTTP {r.status_code}: {r.text[:120]}")
+            return None
         try:
             return r.json()
         except Exception:

@@ -29,6 +29,12 @@
 * `ctx.expect_page()` try/except ve 5s timeout ile korundu; "Book now" aynı sekmede açılırsa script çökmez.
 * İstek başlığında veya Storage'da token tespit edildiği anda diske (`token.txt`, `.env`) ve SQLite'a anında atomik olarak yazılır.
 
+### E. 429202 IP Hız Sınırı ve Bütçe Korunumu (Gate G2)
+* **Asyncio Import Düzeltmesi:** [`bot/booker.py`](bot/booker.py) içine `import asyncio` eklendi; 429202 dalındaki `await asyncio.sleep(...)` çağrısının `NameError` ile patlaması engellendi.
+* **Hesap Bütçesi Korunumu:** 429202 bir IP hızı sınırıdır, hesabın suçu yoktur. Son denemede de 429202 gelirse `return False` ile doğrudan çıkılır; `DB.budget_lock(..., 1800)` satırına düşmesi engellendi. Böylece masum hesaplar 30 dakika uyutulmaz.
+* **Sahte "Slot Yok" / 0 Slot Yanılsaması Giderildi:** [`bot/vfs.py`](bot/vfs.py) `public_earliest()` fonksiyonuna `if r.status_code != 200: return None` eklendi. HTTP 429 yanıtı (`{"code": "429202"}`) artık geçerli slot verisi gibi algılanmaz, `son_sweep` haksız yere güncellenmez.
+* **Rate Limit Streak (`rl_streak`) & Telegram Uyarısı:** [`bot/poller.py`](bot/poller.py) `sweep_once()` içine streak sayacı eklendi. Peş peşe 3 kez hız sınırı alındığında Telegram'a `⚠️ VFS 3 kez üst üste hız sınırı verdi — proxy şart.` bildirimi gönderilir; başarılı bir sweep alındığında streak sıfırlanır.
+
 ---
 
 ## 2. Konsol Çıktıları (Terminal Console Outputs)
@@ -144,6 +150,17 @@ Clean Token: 5YpTBRikGN59YHwM18CyGr5F43bFua...
 • Varyant D: Hem authorization hem x-auth-token: HTTP 429 | { "code": "429202" }
 ```
 
+### Konsol Çıktısı 7: Gate G2 Testi — 429202 Bütçe Korunumu & Poller Streak (`python scripts/test_gate_g2.py`)
+```text
+=== Gate G2 Testi Baslatiliyor ===
+[1] Booker 429202 durumunda budget_lock yapmadan cikiyor -> BASARILI.
+[2] vfs.public_earliest HTTP != 200 (429) durumunda None donuyor -> BASARILI.
+[3] poller.sweep_once 3 pespese rate limit sonrasi Telegram uyarisi gonderdi -> BASARILI.
+[4] Basarili sweep sonrasinda rl_streak sifirlandi ve son_sweep guncellendi -> BASARILI.
+
+Gate G2 BUTUN TESTLER BASARIYLA GECILDI!
+```
+
 ---
 
 ## 3. Canlı Ağ Testi Analiz ve Karar Matrisi
@@ -152,7 +169,9 @@ Clean Token: 5YpTBRikGN59YHwM18CyGr5F43bFua...
 | :--- | :--- | :--- |
 | **Cloudflare 403201 Engeli** | **AŞILDI (YOK)** | `cf_clearance` ve `curl_cffi` Chrome TLS impersonation başarıyla doğrulandı; Cloudflare WAF bot katmanı baypas edildi. |
 | **429202 Hız Sınırı & Clearance Korunumu** | **KORUNDU** | HTTP 429 durumunda `cf_clearance` çerezi silinmez, gereksiz Chrome açılmaz; IP seviyesi bekleme yapılır. |
-| **Hesap Kilidi Ayrımı** | **DÜZELTİLDİ** | `booker.py` içinde 429202 (IP hız sınırı) ile 24 saatlik gerçek hesap kilidi ayrıldı. 429202 nedeniyle hesaplar 6 saat uyutulmaz. |
+| **Hesap Bütçesi ve Kilidi Ayrımı** | **DÜZELTİLDİ** | `booker.py` içinde 429202 (IP hız sınırı) denemeleri tükettiğinde `budget_lock` yazılmaz; hesaplar haksız yere 30 dakika beklemeye alınmaz. |
+| **Sahte Slot Tespiti Engeli** | **DÜZELTİLDİ** | `vfs.public_earliest` HTTP 200 dışındaki tüm yanıtlarda `None` döner; `poller` sahte 0 slot ile `son_sweep` güncellemez. |
+| **Rate Limit Streak & Uyarı** | **EKLENDİ** | `poller.sweep_once` 3 ardışık 429'da Telegram'a proxy uyarısı gönderir (`rl_streak`). |
 | **Token Başlığı Desteği** | **DİNAMİK** | `config.yaml` içine `portal.token_header: "authorization"` eklendi; hem `authorization: Bearer ...` hem `x-auth-token` desteklendi. |
 | **VFS Lift API Durumu** | **HTTP 429 (`429202`)** | VFS Global'in ev IP'sine uyguladığı uygulama seviyesi hız sınırı (rate limit cooldown). Token'sız istek dahi 429202 döndüğü için engel IP bazlıdır. |
 | **Sonraki Doğrulama Adımı** | **Telefon Hotspot IP** | Telefonun hücresel bağlantısından (hotspot) tek istek atılarak ev IP'sinin flag durumu doğrulanabilir; 200 dönerse ISP proxy rotasyonu kesin çözümdür. |
