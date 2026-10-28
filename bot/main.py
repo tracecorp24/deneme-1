@@ -31,10 +31,16 @@ async def amain() -> None:
     DB.log("INFO", "VFS Bot Katman 0 & Katman 1 motoru başlatıldı")
     await notify.send("🚀 <b>VFS Global Bulgaristan Vize Botu Başlatıldı</b>\nMod: Public Sweep (Katman 0)")
 
+    from .booker import Booker, LoginWorker
+
+    booker = Booker(http, vfs, notify)
+    login_worker = LoginWorker(http, vfs, notify)
+    poller = PublicPoller(http, vfs, notify, booker=booker, login_worker=login_worker)
+
     try:
         await asyncio.gather(
             excel_sync_loop(),
-            PublicPoller(http, vfs, notify).run(),
+            poller.run(),
             notify.heartbeat_loop(),
         )
     finally:

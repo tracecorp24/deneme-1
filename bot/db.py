@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS applicants (
     randevu_tarihi TEXT, randevu_saati TEXT, merkez TEXT, referans_no TEXT,
     deneme_sayisi INTEGER DEFAULT 0,
     son_hata TEXT, guncelleme_zamani TEXT,
-    proxy_id INTEGER, yedek_email TEXT
+    proxy_id INTEGER, yedek_email TEXT,
+    submitted_at TEXT
 );
 CREATE TABLE IF NOT EXISTS slots_seen (
     hash TEXT PRIMARY KEY, merkez TEXT, kategori TEXT, tarih TEXT, ilk_gorulme TEXT
@@ -42,6 +43,15 @@ CREATE TABLE IF NOT EXISTS events (
     applicant_id INTEGER, mesaj TEXT
 );
 CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT);
+CREATE TABLE IF NOT EXISTS notified (
+    applicant_id INTEGER, hash TEXT, ts TEXT,
+    PRIMARY KEY (applicant_id, hash)
+);
+CREATE TABLE IF NOT EXISTS booking_lock (
+    applicant_id INTEGER PRIMARY KEY,
+    owner TEXT,
+    since REAL
+);
 """
 
 INPUT_COLS = [
@@ -51,7 +61,7 @@ INPUT_COLS = [
 ]
 OUTPUT_COLS = [
     "durum", "randevu_tarihi", "randevu_saati", "merkez", "referans_no",
-    "deneme_sayisi", "son_hata", "guncelleme_zamani",
+    "deneme_sayisi", "son_hata", "guncelleme_zamani", "submitted_at",
 ]
 
 
@@ -64,7 +74,59 @@ class DB:
         with self._lock:
             self._conn.execute("PRAGMA journal_mode=WAL")
             self._conn.executescript(SCHEMA)
+            # Kolon göçü (E1: submitted_at)
+            try:
+                self._conn.execute("ALTER TABLE applicants ADD COLUMN submitted_at TEXT")
+            except sqlite3.OperationalError:
+                pass
+            # Tablo göçü (F3: booking_lock)
+            try:
+                self._conn.execute(
+                    "CREATE TABLE IF NOT EXISTS booking_lock (applicant_id INTEGER PRIMARY KEY, owner TEXT, since REAL)"
+                )
+            except sqlite3.OperationalError:
+                pass
             self._conn.commit()
+
+    def acquire_booking_lock(self, applicant_id: int, owner: str = "booker", timeout_s: float = 300.0) -> bool:
+        """F2/F3: Aynı başvuran için eşzamanlı rezervasyonları engellemek için kilit alır."""
+        with self._lock:
+            cur = self._conn.cursor()
+            cur.execute("SELECT owner, since FROM booking_lock WHERE applicant_id=?", (applicant_id,))
+            row = cur.fetchone()
+            now = time.time()
+            if row:
+                since = row["since"]
+                if (now - since) < timeout_s:
+                    return False  # Hâlâ geçerli bir kilit var
+                # Zaman aşımına uğramış eski kilit, devral
+                cur.execute("UPDATE booking_lock SET owner=?, since=? WHERE applicant_id=?", (owner, now, applicant_id))
+            else:
+                cur.execute("INSERT INTO booking_lock (applicant_id, owner, since) VALUES (?, ?, ?)", (applicant_id, owner, now))
+            self._conn.commit()
+            return True
+
+    def release_booking_lock(self, applicant_id: int) -> None:
+        """F2/F3: Rezervasyon kilidini kaldırır."""
+        with self._lock:
+            self._conn.execute("DELETE FROM booking_lock WHERE applicant_id=?", (applicant_id,))
+            self._conn.commit()
+
+    def is_booking_locked(self, applicant_id: int, timeout_s: float = 300.0) -> bool:
+        with self._lock:
+            rows = list(self._conn.execute("SELECT since FROM booking_lock WHERE applicant_id=?", (applicant_id,)))
+            if not rows:
+                return False
+            return (time.time() - rows[0]["since"]) < timeout_s
+
+    def budget_is_locked(self, key: str) -> bool:
+        """E3: Login bütçesi meta tablosundan kontrol edilir."""
+        until = self.meta_get(f"cooldown:{key}")
+        return bool(until and float(until) > time.time())
+
+    def budget_lock(self, key: str, seconds: float) -> None:
+        """E3: Login bütçesi cooldown süresi meta tablosuna yazılır."""
+        self.meta_set(f"cooldown:{key}", str(time.time() + seconds))
 
     # ---- düşük seviye ----
     def q(self, sql: str, params: Iterable = ()) -> list[sqlite3.Row]:
@@ -128,6 +190,17 @@ class DB:
             (slot_hash, merkez, kategori, tarih, self.now()),
         )
         return True
+
+    def applicant_notified(self, applicant_id: int, slot_hash: str) -> bool:
+        """D1: Başvuran bazlı dedupe. Aynı slot daha önce bu başvurana bildirildiyse True döner."""
+        rows = self.q("SELECT 1 FROM notified WHERE applicant_id=? AND hash=?", (applicant_id, slot_hash))
+        if rows:
+            return True
+        self.x(
+            "INSERT OR IGNORE INTO notified (applicant_id, hash, ts) VALUES (?,?,?)",
+            (applicant_id, slot_hash, self.now()),
+        )
+        return False
 
     # ---- oturum ----
     def session_load(self, account_id: str) -> dict[str, Any] | None:

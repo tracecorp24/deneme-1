@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 
-from config import SCREENSHOTS_DIR
+from core.config import SCREENSHOTS_DIR, APPOINTMENT_URL
 from core.browser import BrowserManager
 from core.captcha import TurnstileSolver
 from core.session_manager import SessionManager
@@ -150,7 +150,6 @@ class TestRunner:
             self.set_step_status(2, "running", "Randevu tanıtım sayfası açılıyor...")
             self.add_log("INFO", "[Adım 2/5] Isınma akışı: Randevu tanıtım sayfası yükleniyor...")
             
-            from config import APPOINTMENT_URL
             page.goto(APPOINTMENT_URL, wait_until="domcontentloaded", timeout=60000)
             HumanTiming.sleep_jitter(2.0)
             

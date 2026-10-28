@@ -3,9 +3,9 @@ bot/http.py - TLS parmak izi + Cloudflare kapısı. 403 burada yakalanır, çağ
 """
 from __future__ import annotations
 import asyncio
-import json
 import random
 import time
+from urllib.parse import urlparse
 from typing import Any
 
 from curl_cffi.requests import AsyncSession
@@ -18,6 +18,26 @@ CHROME_UA = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
 )
+
+
+def split_proxy(proxy_url: str) -> dict[str, str] | None:
+    """
+    C1: user:pass@host:port proxy URL'sini Playwright uyumlu dict formatına böler.
+    Örnek: http://user:pass@1.2.3.4:8080 -> {"server": "http://1.2.3.4:8080", "username": "user", "password": "pass"}
+    """
+    if not proxy_url:
+        return None
+    p = urlparse(proxy_url)
+    scheme = p.scheme or "http"
+    host = p.hostname or ""
+    port = f":{p.port}" if p.port else ""
+    server = f"{scheme}://{host}{port}"
+    res: dict[str, str] = {"server": server}
+    if p.username:
+        res["username"] = p.username
+    if p.password:
+        res["password"] = p.password
+    return res
 
 
 class VfsHttp:
@@ -50,7 +70,8 @@ class VfsHttp:
             if s and s.get("cf_clearance") and (s.get("cf_expires_at") or 0) > time.time():
                 return True
             cookie, ua = await self._mint_cf_clearance(proxy)
-            if not cookie:
+            # C4: Mint başarısızsa veya UA boşsa False dön
+            if not cookie or not ua:
                 DB.log("WARN", f"cf_clearance üretilemedi: {identity}")
                 return False
             DB.session_save(
@@ -64,16 +85,24 @@ class VfsHttp:
             return True
 
     async def _mint_cf_clearance(self, proxy: str) -> tuple[str | None, str]:
-        """Playwright'ın Chromium'u Cloudflare'de bloke → channel='chrome' şart."""
+        """
+        Playwright'ın Chromium'u Cloudflare'de bloke → channel='chrome' şart.
+        C1: split_proxy ile user:pass ayrımı.
+        C2: headless CFG["http"]["headless"]'den gelir.
+        C4: mint eden UA ile cf_clearance birebir saklanır; hata durumunda CHROME_UA'ya düşülmez.
+        """
         from patchright.async_api import async_playwright
 
+        headless = CFG["http"].get("headless", False)
         launch_kwargs: dict[str, Any] = {
             "channel": "chrome",
-            "headless": False,
+            "headless": headless,
             "args": ["--disable-blink-features=AutomationControlled"]
         }
         if proxy:
-            launch_kwargs["proxy"] = {"server": proxy}
+            parsed_proxy = split_proxy(proxy)
+            if parsed_proxy:
+                launch_kwargs["proxy"] = parsed_proxy
 
         async with async_playwright() as p:
             browser = await p.chromium.launch(**launch_kwargs)
@@ -88,10 +117,11 @@ class VfsHttp:
                         ua = await page.evaluate("navigator.userAgent")
                         return hit["value"], ua
                     await asyncio.sleep(1)
-                return None, CHROME_UA
+                # C4: Mint başarısızsa sahte UA yerine boş dön
+                return None, ""
             except Exception as e:
                 DB.log("WARN", f"_mint_cf_clearance hatası: {e}")
-                return None, CHROME_UA
+                return None, ""
             finally:
                 await ctx.close()
                 await browser.close()
@@ -111,9 +141,17 @@ class VfsHttp:
         retries = retries if retries is not None else int(CFG["http"]["max_retries"])
 
         for attempt in range(retries):
-            await self.ensure_cf_clearance(identity, proxy)
+            # C4: clearance sağlanamazsa hemen sonraki denemeye geç
+            ok = await self.ensure_cf_clearance(identity, proxy)
+            if not ok:
+                await asyncio.sleep(1)
+                continue
+
             s = await self._session(identity, proxy)
             sess = DB.session_load(identity) or {}
+
+            # C4: cf_clearance'ı mint eden UA'yı al
+            used_ua = sess.get("user_agent") or CHROME_UA
 
             h = {
                 "accept": "application/json, text/plain, */*",
@@ -121,13 +159,23 @@ class VfsHttp:
                 "content-type": "application/json",
                 "origin": CFG["portal"]["base"].rstrip("/"),
                 "referer": CFG["portal"]["base"].rstrip("/") + "/",
-                "user-agent": sess.get("user_agent") or CHROME_UA,
+                "user-agent": used_ua,
             }
             if sess.get("authorize"):
                 h["authorize"] = sess["authorize"]
             if sess.get("cf_clearance"):
                 s.cookies.set("cf_clearance", sess["cf_clearance"], domain=".vfsglobal.com")
             h.update(headers or {})
+
+            # B2: x-auth-token TTL kontrolü (20 dakikadan eskiyse WARN logla)
+            x_token_ts = DB.meta_get("x_token_ts")
+            if x_token_ts:
+                try:
+                    age_seconds = time.time() - float(x_token_ts)
+                    if age_seconds > 1200:
+                        DB.log("WARN", f"x-auth-token 20 dakikadan eski ({int(age_seconds)} sn) - bayatlama riski!")
+                except Exception:
+                    pass
 
             async with self.proxy_mgr.slot(proxy):
                 await asyncio.sleep(random.uniform(0.2, 1.2))
@@ -157,10 +205,17 @@ class VfsHttp:
                 continue
 
             if code in (403, 429):
-                # cf_clearance bayatlamış olabilir → cookie'yi yak, IP'yi dinlendir
+                # cf_clearance bayatlamış olabilir → cookie'yi yak
                 DB.session_save(identity, cf_clearance=None, cf_expires_at=0)
                 self.proxy_mgr.penalize(proxy)
-                await asyncio.sleep(min(2 ** attempt * 5 + random.random() * 5, 300))
+
+                # C3: Havuz boşsa bekleme tavanını 60s'ye indir; havuz doluysa sıradaki IP'ye geç
+                if not self.proxy_mgr.pool:
+                    wait = min(2 ** attempt * 5 + random.random() * 5, 60)
+                else:
+                    wait = min(2 ** attempt * 2 + random.random() * 2, 30)
+
+                await asyncio.sleep(wait)
                 proxy = self.proxy_mgr.healthy(identity)
                 continue
 

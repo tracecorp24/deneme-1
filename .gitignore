@@ -31,6 +31,8 @@ venv/
 .env
 .env.*
 *.local
+token.txt
+*.token
 
 # Chrome User Profiles & Cache
 chrome_profile/
@@ -55,11 +57,10 @@ data/lift_requests.json
 logs/
 data/logs/
 screenshots/
-data/screenshots/
-*.png
-*.jpg
-*.jpeg
-*.webp
+data/screenshots/*.png
+data/screenshots/*.jpg
+data/screenshots/*.jpeg
+data/screenshots/*.webp
 
 # IDEs
 .idea/

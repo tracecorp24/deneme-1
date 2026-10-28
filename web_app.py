@@ -13,7 +13,7 @@ from pathlib import Path
 from flask import Flask, render_template, jsonify, request, send_file, send_from_directory
 from werkzeug.utils import secure_filename
 
-from config import DATA_DIR, SCREENSHOTS_DIR
+from core.config import DATA_DIR, SCREENSHOTS_DIR
 from core.excel_manager import ExcelManager
 from core.test_runner import runner_instance
 from bot.service import bot_service
@@ -242,6 +242,63 @@ def test_telegram():
         return jsonify({"success": ok, "message": msg})
     finally:
         loop.close()
+
+
+def handle_telegram_callback(cb_data: str) -> dict:
+    """G1: Telegram inline buton callback data işleyici (book:{id}, skip:{id})."""
+    if not cb_data:
+        return {"success": False, "message": "Boş callback verisi."}
+    if cb_data.startswith("book:"):
+        try:
+            applicant_id = int(cb_data.split(":", 1)[1])
+            ap_row = DB.q("SELECT randevu_tarihi FROM applicants WHERE id=?", (applicant_id,))
+            target_date = ap_row[0]["randevu_tarihi"] if ap_row and ap_row[0]["randevu_tarihi"] else ""
+            res = bot_service.book_applicant(applicant_id, target_date)
+            DB.log("INFO", f"Telegram callback book:{applicant_id} sonucu: {res.get('message')}", applicant_id)
+            return res
+        except Exception as e:
+            return {"success": False, "message": f"Rezervasyon tetikleme hatası: {e}"}
+    elif cb_data.startswith("skip:"):
+        try:
+            applicant_id = int(cb_data.split(":", 1)[1])
+            DB.log("INFO", f"Telegram üzerinden slot yoksayıldı: #{applicant_id}", applicant_id)
+            return {"success": True, "message": f"Başvuran #{applicant_id} için slot atlandı."}
+        except Exception as e:
+            return {"success": False, "message": f"Yoksayma hatası: {e}"}
+    return {"success": False, "message": f"Bilinmeyen callback verisi: {cb_data}"}
+
+
+@app.route("/telegram/webhook", methods=["POST"])
+@app.route("/api/telegram-webhook", methods=["POST"])
+def telegram_webhook():
+    """G1: Telegram inline buton (book:id, skip:id) callback query webhook endpoint'i."""
+    data = request.json or {}
+    callback_query = data.get("callback_query")
+    if not callback_query:
+        return jsonify({"ok": True})
+
+    query_id = callback_query.get("id")
+    cb_data = callback_query.get("data", "")
+
+    if query_id:
+        from bot.config import CFG
+        token = CFG["telegram"].get("token")
+        if token:
+            import urllib.request
+            import json as _json
+            url = f"https://api.telegram.org/bot{token}/answerCallbackQuery"
+            req = urllib.request.Request(
+                url,
+                data=_json.dumps({"callback_query_id": query_id, "text": "İstek alındı, işleniyor..."}).encode(),
+                headers={"Content-Type": "application/json"}
+            )
+            try:
+                urllib.request.urlopen(req, timeout=3)
+            except Exception:
+                pass
+
+    res = handle_telegram_callback(cb_data)
+    return jsonify({"ok": True, "result": res})
 
 
 @app.route("/api/test-imap", methods=["POST"])

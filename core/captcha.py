@@ -9,7 +9,7 @@ import logging
 from typing import Tuple, Optional
 from patchright.sync_api import Page, Frame
 
-from config import CAPTCHA_CONFIG
+from core.config import CAPTCHA_CONFIG
 from core.human import HumanTiming, HumanMouse
 
 logger = logging.getLogger("VFS_Bot.Captcha")

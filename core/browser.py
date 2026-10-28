@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Optional, Tuple
 from patchright.sync_api import sync_playwright, BrowserContext, Page, Playwright
 
-from config import BROWSER_CONFIG, SCREENSHOTS_DIR, BASE_URL, APPOINTMENT_URL
+from core.config import BROWSER_CONFIG, SCREENSHOTS_DIR, BASE_URL, APPOINTMENT_URL
 from core.human import HumanTiming, HumanMouse, HumanScroll
 
 logger = logging.getLogger("VFS_Bot.Browser")

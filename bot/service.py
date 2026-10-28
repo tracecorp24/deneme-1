@@ -128,26 +128,33 @@ class BotService:
 
     def sweep_now(self) -> Dict[str, Any]:
         """Anlık olarak tek seferlik Katman 0 Public Sweep çalıştırır."""
-        async def _do():
-            proxy_mgr = ProxyManager()
-            http = VfsHttp(proxy_mgr)
-            vfs = VfsClient(http)
-            notify = Notify()
-            poller = PublicPoller(http, vfs, notify)
-            try:
-                hits = await poller.sweep_once()
-                return hits
-            finally:
-                await http.close()
-
-        loop = asyncio.new_event_loop()
         try:
-            hits = loop.run_until_complete(_do())
-            return {"success": True, "hits": hits, "message": f"{hits} yeni slot bulundu."}
+            if self.is_running and self._loop and self._loop.is_running() and self.poller:
+                # F1: Çalışan botun event loop'una run_coroutine_threadsafe ile bağlan
+                future = asyncio.run_coroutine_threadsafe(self.poller.sweep_once(), self._loop)
+                hits = future.result(timeout=60)
+                return {"success": True, "hits": hits, "message": f"{hits} yeni bildirim üretildi."}
+            else:
+                # Bot kapalıysa tek seferlik loop kur
+                async def _do():
+                    proxy_mgr = ProxyManager()
+                    http = VfsHttp(proxy_mgr)
+                    try:
+                        vfs = VfsClient(http)
+                        notify = Notify()
+                        poller = PublicPoller(http, vfs, notify)
+                        return await poller.sweep_once()
+                    finally:
+                        await http.close()
+
+                loop = asyncio.new_event_loop()
+                try:
+                    hits = loop.run_until_complete(_do())
+                    return {"success": True, "hits": hits, "message": f"{hits} yeni bildirim üretildi."}
+                finally:
+                    loop.close()
         except Exception as e:
             return {"success": False, "hits": 0, "message": str(e)}
-        finally:
-            loop.close()
 
     def book_applicant(self, applicant_id: int, tarih: str) -> Dict[str, Any]:
         """Belirli bir başvuran için Katman 1 rezervasyon sürecini manuel tetikler."""
@@ -156,33 +163,53 @@ class BotService:
             return {"success": False, "message": f"Başvuran #{applicant_id} bulunamadı."}
         ap = dict(rows[0])
 
-        async def _do_book():
-            proxy_mgr = ProxyManager()
-            http = VfsHttp(proxy_mgr)
-            vfs = VfsClient(http)
-            notify = Notify()
-            lw = LoginWorker(http, vfs, notify)
-            booker = Booker(http, vfs, notify)
-            try:
-                DB.log("INFO", f"Manuel rezervasyon başlatıldı: {ap['ad']} {ap['soyad']} -> {tarih}", applicant_id)
-                has_session = await lw.ensure_session(ap)
-                if not has_session:
-                    return {"success": False, "message": "VFS oturumu açılamadı (OTP veya şifre kontrol ediniz)."}
-                success = await booker.book(ap, tarih)
-                if success:
-                    write_outputs()
-                    return {"success": True, "message": "Randevu başarıyla alındı!"}
-                return {"success": False, "message": "Rezervasyon isteği VFS tarafından onaylanmadı."}
-            finally:
-                await http.close()
+        # F2: Hesap kilidi kontrolü (eşzamanlı rezervasyon koruması)
+        if not DB.acquire_booking_lock(applicant_id, owner="manual_panel"):
+            DB.log("WARN", f"Manuel rezervasyon engellendi (hesap kilitli): #{applicant_id}", applicant_id)
+            return {"success": False, "message": f"Başvuran #{applicant_id} için şu anda bir rezervasyon işlemi devam ediyor (kilitli)."}
 
-        loop = asyncio.new_event_loop()
+        async def _do_book(lw: LoginWorker, bkr: Booker):
+            DB.log("INFO", f"Manuel rezervasyon başlatıldı: {ap['ad']} {ap['soyad']} -> {tarih}", applicant_id)
+            has_session = await lw.ensure_session(ap)
+            if not has_session:
+                return {"success": False, "message": "VFS oturumu açılamadı (OTP veya şifre kontrol ediniz)."}
+            success = await bkr.book(ap, tarih)
+            if success:
+                write_outputs()
+                return {"success": True, "message": "Randevu başarıyla alındı!"}
+            return {"success": False, "message": "Rezervasyon isteği VFS tarafından onaylanmadı."}
+
         try:
-            return loop.run_until_complete(_do_book())
+            if self.is_running and self._loop and self._loop.is_running() and self.login_worker and self.booker:
+                # F1: Çalışan botun event loop'una run_coroutine_threadsafe ile bağlan
+                future = asyncio.run_coroutine_threadsafe(
+                    _do_book(self.login_worker, self.booker),
+                    self._loop
+                )
+                return future.result(timeout=180)
+            else:
+                # Bot kapalıysa tek seferlik loop kur
+                async def _standalone():
+                    proxy_mgr = ProxyManager()
+                    http = VfsHttp(proxy_mgr)
+                    try:
+                        vfs = VfsClient(http)
+                        notify = Notify()
+                        lw = LoginWorker(http, vfs, notify)
+                        booker = Booker(http, vfs, notify)
+                        return await _do_book(lw, booker)
+                    finally:
+                        await http.close()
+
+                loop = asyncio.new_event_loop()
+                try:
+                    return loop.run_until_complete(_standalone())
+                finally:
+                    loop.close()
         except Exception as e:
             return {"success": False, "message": f"Hata: {str(e)}"}
         finally:
-            loop.close()
+            DB.release_booking_lock(applicant_id)
 
     def get_status(self) -> Dict[str, Any]:
         """Tüm sistemin canlı telemetri durumunu döndürür."""

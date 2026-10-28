@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Optional, Dict, Any, List
 from patchright.sync_api import BrowserContext, Page
 
-from config import SESSIONS_DIR
+from core.config import SESSIONS_DIR
 
 logger = logging.getLogger("VFS_Bot.Session")
 

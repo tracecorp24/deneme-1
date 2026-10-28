@@ -1,17 +1,15 @@
 """
-main.py - VFS Vize Botu (Aşama 1: İnsansı Sayfa Açma ve Captcha Çözücü)
-
-Bu modül, botun ilk aşamasını icra eder:
-1. Resmi Google Chrome + Patchright + Kalıcı Profil (Persistent Profile) ile başlar.
-2. plan.md gereği ısınma akışını (warm-up) izleyerek Randevu sayfasından giriş yapar.
-3. Çerez izinlerini insan gibi kabul eder.
-4. 'Book now' butonuna Bézier kavisli fare hareketi ile tıklar.
-5. Açılan Giriş (Login) sayfasında Cloudflare Turnstile captcha'sını izler ve insansı hareketlerle çözer.
-6. Oturum çerezlerini (cf_clearance vb.) diske saklar.
+scripts/stage1_check.py - Aşama 1 Teşhis Aracı (Tarayıcı, Isınma & Turnstile Kontrolü)
+Bu script yalnızca Aşama 1 teşhisi içindir; canlı bot üretimi için bot.main kullanılır.
 """
-import sys
 import logging
-from config import SCREENSHOTS_DIR
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from core.config import SCREENSHOTS_DIR
 from core import BrowserManager, TurnstileSolver, SessionManager, HumanTiming
 
 # Loglama ayarları
@@ -20,7 +18,7 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     datefmt="%H:%M:%S"
 )
-logger = logging.getLogger("VFS_Bot.Main")
+logger = logging.getLogger("VFS_Bot.Stage1Check")
 
 
 def run_stage_one():
@@ -62,7 +60,7 @@ def run_stage_one():
         else:
             logger.warning("Giriş formu henüz tam görünür değil.")
 
-        # 5. Çerezleri kaydet (plan.md Bölüm 6)
+        # 5. Çerezleri kaydet
         logger.info("[Adım 4/4] Oturum çerezleri (cf_clearance dahil) diske kaydediliyor...")
         SessionManager.save_session(manager.context, session_id="bgr_vfs")
 

@@ -8,7 +8,7 @@ import math
 import random
 from typing import Tuple, Optional
 from patchright.sync_api import Page, Locator
-from config import HUMAN_CONFIG
+from core.config import HUMAN_CONFIG
 
 
 class HumanTiming:

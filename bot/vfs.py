@@ -109,7 +109,6 @@ class VfsClient:
         body = {
             "username": account_id,
             "otpCode": otp,
-            "otp": otp,
             "missionCode": CFG["portal"]["mission_code"]
         }
         r = await self.http.request("POST", url, identity=account_id, json_body=body)
