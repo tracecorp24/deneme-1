@@ -2,7 +2,8 @@
 
 Türkiye &rarr; Bulgaristan VFS Global vize başvuru portalı (`https://visa.vfsglobal.com/tur/en/bgr/`) için geliştirilmiş, ban korumalı ve iki katmanlı hibrit randevu tespit ve rezervasyon otomasyon sistemi.
 
-> **Modül Mimarisi:** `core/` modülü yalnızca Aşama 1 teşhis ve tarayıcı doğrulama testleri içindir; 7/24 kesintisiz üretim kodu ve rezervasyon motoru tamamen `bot/` modülü altındadır.
+> **Modül Mimarisi:** `core/` modülü yalnızca Aşama 1 teşhis ve tarayıcı doğrulama testleri içindir; 7/24 kesintisiz üretim kodu ve rezervasyon motoru tamamen `bot/` modülü altındadır.  
+> 📊 **Canlı Test & Doğrulama Raporu:** Canlı ağ konsol çıktıları ve test kapısı doğrulama sonuçları için [LIVE_TEST_REPORT.md](LIVE_TEST_REPORT.md) dosyasına bakınız.
 
 ---
 
